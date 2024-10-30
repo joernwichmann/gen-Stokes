@@ -27,7 +27,7 @@ from src.postprocess.processmanager import ProcessManager
 
 #load global and lokal configs
 from configs import intro_additive as cf
-from configs import intro_global as gcf
+from configs import p_variation_global as gcf
 
 def generate_one(time_disc: TimeDiscretisation,
                  space_disc: SpaceDiscretisation,
