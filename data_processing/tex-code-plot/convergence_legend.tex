@@ -1,0 +1,96 @@
+\documentclass[tikz]{standalone}
+
+
+\usepackage{amsmath}     
+\usepackage{dsfont}		
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{amssymb}
+
+\usepackage{latexsym}
+\usepackage{euscript,makeidx,color,mathrsfs}
+\usepackage{enumerate}
+
+%%---------------------------------------------------------------
+%plotting
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\pgfplotsset{
+  width=.65\linewidth,
+  axis background/.style={fill=black!5!white},
+  grid style={densely dotted,semithick},
+  compat=newest, % compatibility for old pgfplots versions
+  no markers, 
+}
+ 
+\definecolor{plot_color1}{HTML}{d7191c}
+\definecolor{plot_color2}{HTML}{fdae61}
+\definecolor{plot_color3}{HTML}{c2a5cf}
+\definecolor{plot_color4}{HTML}{abd9e9}
+\definecolor{plot_color5}{HTML}{2c7bb6}
+
+
+\pgfplotscreateplotcyclelist{MyColors}{%
+    {plot_color1,line width=1.2},
+    {plot_color2,line width=1.2},
+    {plot_color3,line width=1.2},
+	{plot_color4,line width=1.2},
+    {plot_color5,line width=1.2},}
+    
+%\usepgfplotslibrary{colorbrewer}
+%%%infos for choosing color in plots https://www.traag.net/2014/06/05/281/
+%%---------------------------------------------------------------
+
+%%--------------------------------------------------------------
+%% load table formats for stability/convergence tables and energy plots
+\usepackage{booktabs}
+
+%%--------------------------------------------------------------
+
+
+%%---------------------------------------------------------------
+%%% Legend 
+%%% Copied from https://tex.stackexchange.com/questions/101576/how-to-draw-horizontalrow-legend-without-the-surronding-rectangle
+% argument #1: any options
+\newenvironment{customlegend}[1][]{%
+    \begingroup
+    % inits/clears the lists (which might be populated from previous
+    % axes):
+    \csname pgfplots@init@cleared@structures\endcsname
+    \pgfplotsset{#1}%
+}{%
+    % draws the legend:
+    \csname pgfplots@createlegend\endcsname
+    \endgroup
+}%
+
+% makes \addlegendimage available (typically only available within an
+% axis environment):
+\def\addlegendimage{\csname pgfplots@addlegendimage\endcsname}
+
+
+
+
+\begin{document}
+
+
+\begin{tikzpicture}
+    \begin{customlegend}[legend entries={
+	{Exp~1},
+	{Exp~2},
+	{Exp~3},
+	{Exp~4},
+	{Exp~5},
+	}]
+    \addlegendimage{plot_color1,line width=1.2}
+    \addlegendimage{plot_color2,line width=1.2}
+    \addlegendimage{plot_color3,line width=1.2}
+    \addlegendimage{plot_color4,line width=1.2}
+    \addlegendimage{plot_color5,line width=1.2}
+    \end{customlegend}
+\end{tikzpicture}
+
+
+\end{document}
