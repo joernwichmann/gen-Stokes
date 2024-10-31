@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 from tools import read_datafile, organize_output
 import configs as cf
 from tqdm import tqdm
@@ -51,6 +52,13 @@ if __name__=="__main__":
     plt.yscale("log")
     plt.xlim(0.0,1.0)
     plt.tight_layout()
+    
+    ##legend
+    # Create dummy Line2D objects for legend
+    legendMarkers = [Line2D([0], [0.1], color=cf.COLOURS_MEAN[noise], linewidth = cf.LINEWIDTH_MEAN) for noise in cf.NOISE_TYPES]
+    legendPvalues = [f"p = {cf.P_VALUE[noise]}" for noise in cf.NOISE_TYPES]
+    plt.legend(legendMarkers,legendPvalues)
+
     plt.savefig(f"intro-all-trajectories.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
     plt.close()
     print(f"Plot saved in 'intro-all-trajectories.{cf.TRAJ_FILEFORMAT}'")
