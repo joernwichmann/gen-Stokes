@@ -3,6 +3,7 @@
 #### locations 
 ROOT_LOCATION = "../../energy_results/"
 MEAN_LOCATION = "/kinetic_energy/"
+DET_LOCATION = "/deterministic/kinetic_energy/"
 IND_LOCATION = "/individual/ind_kinetic_energy"
 DATA_SOURCE = "refinement_9.csv"
 
@@ -10,9 +11,12 @@ DATA_SOURCE = "refinement_9.csv"
 NUMBER_SAMPLES = 10
 NOISE_TYPES = ["p-variation_exp1", "p-variation_exp2", "p-variation_exp3"]
 
+#### matching experiment to its p-value
+P_VALUE = {"p-variation_exp1": 3/2.0, "p-variation_exp2": 2, "p-variation_exp3": 3}
+
 #### stationary
-STATIONARY_TIME = {"p-variation_exp1": 0.13, "p-variation_exp2": 0.32, "p-variation_exp3": 0.13}
-STATIONARY_ENERGY = 0.04206492724892853
+STATIONARY_TIME = {"p-variation_exp1": 0.4, "p-variation_exp2": 0.2, "p-variation_exp3": 0.1}
+STATIONARY_ENERGY = {"p-variation_exp1": 9.2212513268467, "p-variation_exp2": 0.167573589997039, "p-variation_exp3": 0.0227904530427081}
 
 #### plotting configs
 # colours
