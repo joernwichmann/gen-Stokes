@@ -25,7 +25,7 @@ from src.postprocess.energy_check import Energy
 from src.postprocess.statistics import StatisticsObject
 from src.postprocess.processmanager import ProcessManager
 
-#load global and lokal configs
+#load global and local configs
 from configs import p_variation_exp2 as cf
 from configs import p_variation_global as gcf
 
@@ -62,10 +62,11 @@ def generate_one(time_disc: TimeDiscretisation,
             )
     return ref_to_noise_increments, ref_to_time_to_velocity, ref_to_time_to_pressure, ref_to_time_to_velocity_midpoints, ref_to_time_to_pressure_midpoints
 
-def generate() -> None:
-    """Runs the experiment multiple times."""
-
-    update_logfile(gcf.DUMP_LOCATION,cf.NAME_LOGFILE_GENERATE)
+def generate(deterministic: bool = False) -> None:
+    """Runs the experiment.
+    deterministic = True: run without stochastic forcing 
+    deterministic = False: run with stochastic forcing
+    """
 
     logging.basicConfig(filename=cf.NAME_LOGFILE_GENERATE,format='%(asctime)s| \t %(message)s', datefmt='%d/%m/%Y %I:%M:%S %p', 
                         level=logstring_to_logger(gcf.LOG_LEVEL),force=True)
@@ -89,6 +90,8 @@ def generate() -> None:
     logging.info(f"\nINITIAL INTENSITY:\t{gcf.INITIAL_INTENSITY}\nNOISE INTENSITY:\t{gcf.NOISE_INTENSITY}")
     initial_condition = gcf.INITIAL_INTENSITY*get_function(gcf.INITIAL_CONDITION_NAME,space_disc,gcf.INITIAL_FREQUENZY_X,gcf.INITIAL_FREQUENZY_Y)
     noise_coefficient = gcf.NOISE_INTENSITY*get_function(gcf.NOISE_COEFFICIENT_NAME,space_disc,gcf.NOISE_FREQUENZY_X,gcf.NOISE_FREQUENZY_Y)
+    if deterministic:
+        noise_coefficient = Function(space_disc.velocity_space)
     ref_to_time_to_det_forcing = {level: {time: gcf.FORCING_INTENSITY*get_function(gcf.FORCING,space_disc,gcf.FORCING_FREQUENZY_X,gcf.FORCING_FREQUENZY_Y) for time in time_disc.ref_to_time_grid[level]} for level in time_disc.refinement_levels}
     p_value = cf.P_VALUE
     kappa_value = gcf.KAPPA_VALUE
@@ -143,10 +146,14 @@ def generate() -> None:
     
     runtimes = {"solving": 0,"comparison": 0, "stability": 0, "energy": 0, "statistics": 0}
     
-    ### start MC iteration
-    print(format_header("START MONTE CARLO ITERATION") + f"\nRequested samples:\t{gcf.MC_SAMPLES}")
-    new_seeds = range(gcf.MC_SAMPLES)
+    if deterministic:
+        print(format_header("RUN DETERMINISTIC EXPERIMENT"))
+        new_seeds = range(1)
+    else: 
+        print(format_header("START MONTE CARLO ITERATION") + f"\nRequested samples:\t{gcf.MC_SAMPLES}")
+        new_seeds = range(gcf.MC_SAMPLES)
 
+    ### start MC iteration 
     for k in new_seeds:
         ### get solution
         print(f"{k*100/len(new_seeds):4.2f}% completed")
@@ -199,25 +206,36 @@ def generate() -> None:
         logging.info(time_convergence_velocity)
         logging.info(time_convergence_pressure)
 
-        time_convergence_velocity.save(cf.TIME_DIRECTORYNAME)
-        time_convergence_pressure.save(cf.TIME_DIRECTORYNAME)
+        if deterministic:
+            time_convergence_velocity.save(cf.TIME_DIRECTORYNAME + "/deterministic")
+            time_convergence_pressure.save(cf.TIME_DIRECTORYNAME + "/deterministic")
+        else:
+            time_convergence_velocity.save(cf.TIME_DIRECTORYNAME)
+            time_convergence_pressure.save(cf.TIME_DIRECTORYNAME)
 
     if gcf.STABILITY_CHECK:
         logging.info(format_header("STABILITY CHECK") + f"\nStability checks are stored in:\t {cf.STABILITY_DIRECTORYNAME}/")
         logging.info(stability_check_velocity)
         logging.info(stability_check_pressure)
 
-        stability_check_velocity.save(cf.STABILITY_DIRECTORYNAME)
-        stability_check_pressure.save(cf.STABILITY_DIRECTORYNAME)
+        if deterministic:
+            stability_check_velocity.save(cf.STABILITY_DIRECTORYNAME + "/deterministic")
+            stability_check_pressure.save(cf.STABILITY_DIRECTORYNAME + "/deterministic")
+        else:
+            stability_check_velocity.save(cf.STABILITY_DIRECTORYNAME)
+            stability_check_pressure.save(cf.STABILITY_DIRECTORYNAME)
 
     if gcf.ENERGY_CHECK:
         logging.info(format_header("ENERGY CHECK") + f"\nEnergy checks are stored in:\t {cf.ENERGY_DIRECTORYNAME}/")
-        energy_check_velocity.save(cf.ENERGY_DIRECTORYNAME)
-        energy_check_velocity.plot(cf.ENERGY_DIRECTORYNAME)
-        #energy_check_velocity.plot_individual(cf.ENERGY_DIRECTORYNAME)
+        if deterministic:  
+            energy_check_velocity.save(cf.ENERGY_DIRECTORYNAME + "/deterministic")
+            energy_check_velocity.plot(cf.ENERGY_DIRECTORYNAME + "/deterministic")
+        else:
+            energy_check_velocity.save(cf.ENERGY_DIRECTORYNAME)
+            energy_check_velocity.plot(cf.ENERGY_DIRECTORYNAME)
 
-    if gcf.IND_ENERGY_CHECK:
-        logging.info(format_header("ENERGY CHECK") + f"\nEnergy checks are stored in:\t {cf.ENERGY_DIRECTORYNAME}/")
+    if gcf.IND_ENERGY_CHECK and not deterministic:
+        logging.info(format_header("ENERGY CHECK") + f"\nIndividual energy checks are stored in:\t {cf.ENERGY_DIRECTORYNAME}/individual/")
         for sample in sample_to_energy_check_velocity.keys():
             sample_to_energy_check_velocity[sample].save(cf.ENERGY_DIRECTORYNAME + "/individual")
             #sample_to_energy_check_velocity[sample].plot(cf.ENERGY_DIRECTORYNAME + "/individual")
@@ -226,14 +244,29 @@ def generate() -> None:
 
     if gcf.STATISTICS_CHECK:
         logging.info(format_header("STATISTICS") + f"\nStatistics are stored in:\t {cf.VTK_DIRECTORY + '/' + cf.STATISTICS_DIRECTORYNAME}/")
-        statistics_velocity.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
-        statistics_velocity_midpoints.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
-        statistics_pressure.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
-        statistics_pressure_midpoints.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
+        if deterministic:
+            statistics_velocity.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME + "/deterministic")
+            statistics_velocity_midpoints.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME + "/deterministic")
+            statistics_pressure.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME + "/deterministic")
+            statistics_pressure_midpoints.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME + "/deterministic")
+        else:
+            statistics_velocity.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
+            statistics_velocity_midpoints.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
+            statistics_pressure.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
+            statistics_pressure_midpoints.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
 
     #show runtimes
-    logging.info(format_runtime(runtimes))
-    print(f"Logs saved in:\t {cf.NAME_LOGFILE_GENERATE}")
+    logging.info(format_runtime(runtimes) + "\n\n")
 
 if __name__ == "__main__":
-    generate()
+    #remove old logfile
+    update_logfile(gcf.DUMP_LOCATION,cf.NAME_LOGFILE_GENERATE)
+
+    #run deterministic experiment
+    generate(deterministic=True)
+    
+    #run stochastic experiment
+    generate(deterministic=False)
+    
+    #display storage location of log file
+    print(f"Logs saved in:\t {cf.NAME_LOGFILE_GENERATE}")
