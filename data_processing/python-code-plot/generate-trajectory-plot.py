@@ -39,11 +39,11 @@ if __name__=="__main__":
         plt.plot(time,conf_plus,color = cf.COLOURS_MEAN[noise],linewidth=cf.LINEWIDTH_SD,alpha=cf.LINEOPACITY_SD,linestyle=cf.LINESTYLE_SD)
         plt.plot(time,conf_minus,color = cf.COLOURS_MEAN[noise],linewidth=cf.LINEWIDTH_SD,alpha=cf.LINEOPACITY_SD,linestyle=cf.LINESTYLE_SD)
 
-    print(f"\tPlotting deterministic energy")
-    file_location = cf.ROOT_LOCATION + "intro-deterministic" + cf.MEAN_LOCATION + cf.DATA_SOURCE
-    complete_data = read_datafile(file_location)
-    time, L1, L2, Linf, SD = organize_output(complete_data)
-    plt.plot(time,L2,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
+    #print(f"\tPlotting deterministic energy")
+    #file_location = cf.ROOT_LOCATION + "intro-deterministic" + cf.MEAN_LOCATION + cf.DATA_SOURCE
+    #complete_data = read_datafile(file_location)
+    #time, L1, L2, Linf, SD = organize_output(complete_data)
+    #plt.plot(time,L2,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
     
     # styling the plot
     plt.ylabel("Kinetic energy")
@@ -86,11 +86,11 @@ if __name__=="__main__":
         plt.plot(time,conf_plus,color = cf.COLOURS_MEAN[noise],linewidth=cf.LINEWIDTH_SD,alpha=cf.LINEOPACITY_SD,linestyle=cf.LINESTYLE_SD)
         plt.plot(time,conf_minus,color = cf.COLOURS_MEAN[noise],linewidth=cf.LINEWIDTH_SD,alpha=cf.LINEOPACITY_SD,linestyle=cf.LINESTYLE_SD)
 
-        print(f"\tPlotting deterministic energy")
-        file_location = cf.ROOT_LOCATION + "intro-deterministic" + cf.MEAN_LOCATION + cf.DATA_SOURCE
-        complete_data = read_datafile(file_location)
-        time, L1, L2, Linf, SD = organize_output(complete_data)
-        plt.plot(time,L2,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
+        #print(f"\tPlotting deterministic energy")
+        #file_location = cf.ROOT_LOCATION + "intro-deterministic" + cf.MEAN_LOCATION + cf.DATA_SOURCE
+        #complete_data = read_datafile(file_location)
+        #time, L1, L2, Linf, SD = organize_output(complete_data)
+        #plt.plot(time,L2,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
         
 
         ### styling the plot
