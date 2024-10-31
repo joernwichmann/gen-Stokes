@@ -1,9 +1,9 @@
 """Contains local parameter configuration."""
 ### Experimentname
-NAME_EXPERIMENT: str = "TH_initial_poly_noise_poly"
+NAME_EXPERIMENT: str = "lid-driven"
 
 ### Algorithm
-ALGORITHM_NAME: str =  "IE mixed FEM Strato Transport with div-sym" #see src.algorithms.select.py for available choices
+ALGORITHM_NAME: str =  "Crank Nicolson mixed FEM Stratonovich Transport Noise with anti-symmetrisation" #see src.algorithms.select.py for available choices
 
 ### Data
 INITIAL_CONDITION_NAME: str = "polynomial - HL projected with BC"    #see 'src.predefined_data' for available choices
