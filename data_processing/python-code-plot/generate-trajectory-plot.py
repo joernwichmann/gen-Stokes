@@ -24,7 +24,7 @@ if __name__=="__main__":
             plt.plot(time,L2,color = cf.COLOURS_INDIVIDUAL[noise],linewidth=cf.LINEWIDTH_INDIVIDUAL,alpha=cf.LINEOPACITY_INDIVIDUAL)
 
     #plot mean and standard deviations
-    print(f"\tPlotting mean and standard devations")
+    print(f"\tPlotting mean, standard devations and deterministic")
     for noise in cf.NOISE_TYPES:
         file_location = cf.ROOT_LOCATION + noise + cf.MEAN_LOCATION + cf.DATA_SOURCE
         complete_data = read_datafile(file_location)
@@ -40,12 +40,11 @@ if __name__=="__main__":
         plt.plot(time,conf_plus,color = cf.COLOURS_MEAN[noise],linewidth=cf.LINEWIDTH_SD,alpha=cf.LINEOPACITY_SD,linestyle=cf.LINESTYLE_SD)
         plt.plot(time,conf_minus,color = cf.COLOURS_MEAN[noise],linewidth=cf.LINEWIDTH_SD,alpha=cf.LINEOPACITY_SD,linestyle=cf.LINESTYLE_SD)
 
-    #print(f"\tPlotting deterministic energy")
-    #file_location = cf.ROOT_LOCATION + "intro-deterministic" + cf.MEAN_LOCATION + cf.DATA_SOURCE
-    #complete_data = read_datafile(file_location)
-    #time, L1, L2, Linf, SD = organize_output(complete_data)
-    #plt.plot(time,L2,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
-    
+        file_location = cf.ROOT_LOCATION + noise + cf.DET_LOCATION + cf.DATA_SOURCE
+        complete_data = read_datafile(file_location)
+        time, L1, L2, Linf, SD = organize_output(complete_data)
+        plt.plot(time,L2,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
+        
     # styling the plot
     plt.ylabel("Kinetic energy")
     plt.xlabel("Time")
@@ -56,7 +55,9 @@ if __name__=="__main__":
     ##legend
     # Create dummy Line2D objects for legend
     legendMarkers = [Line2D([0], [0.1], color=cf.COLOURS_MEAN[noise], linewidth = cf.LINEWIDTH_MEAN) for noise in cf.NOISE_TYPES]
+    legendMarkers.append(Line2D([0], [0.1], color=cf.BLACK, linewidth = cf.LINEWIDTH_MEAN))
     legendPvalues = [f"p = {cf.P_VALUE[noise]}" for noise in cf.NOISE_TYPES]
+    legendPvalues.append("det")
     plt.legend(legendMarkers,legendPvalues)
 
     plt.savefig(f"intro-all-trajectories.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
@@ -94,11 +95,11 @@ if __name__=="__main__":
         plt.plot(time,conf_plus,color = cf.COLOURS_MEAN[noise],linewidth=cf.LINEWIDTH_SD,alpha=cf.LINEOPACITY_SD,linestyle=cf.LINESTYLE_SD)
         plt.plot(time,conf_minus,color = cf.COLOURS_MEAN[noise],linewidth=cf.LINEWIDTH_SD,alpha=cf.LINEOPACITY_SD,linestyle=cf.LINESTYLE_SD)
 
-        #print(f"\tPlotting deterministic energy")
-        #file_location = cf.ROOT_LOCATION + "intro-deterministic" + cf.MEAN_LOCATION + cf.DATA_SOURCE
-        #complete_data = read_datafile(file_location)
-        #time, L1, L2, Linf, SD = organize_output(complete_data)
-        #plt.plot(time,L2,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
+        print(f"\tPlotting deterministic energy")
+        file_location = cf.ROOT_LOCATION + noise + cf.DET_LOCATION + cf.DATA_SOURCE
+        complete_data = read_datafile(file_location)
+        time, L1, L2, Linf, SD = organize_output(complete_data)
+        plt.plot(time,L2,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
         
 
         ### styling the plot
