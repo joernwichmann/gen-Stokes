@@ -1,9 +1,9 @@
 """Contains local parameter configuration."""
 ### Experimentname
-NAME_EXPERIMENT: str = "lid-driven_exp1"
+NAME_EXPERIMENT: str = "lid-driven_exp3"
 
 ### P-VALUE
-P_VALUE = 3/2.0
+P_VALUE = 3.0
 
 ### Algorithm
 ALGORITHM_NAME: str =  "lid-driven cavity solver" #see src.algorithms.select.py for available choices
