@@ -167,14 +167,14 @@ def lid_driven_cavity_solver(space_disc: SpaceDiscretisation,
     det_forcing, _ = Function(space_disc.mixed_space).subfunctions
 
     # set initial conditions
-    uold.assign(initial_velocity)
+    uold.assign(initial_velocity-boundary_condition)
     pold.assign(initial_pressure)
 
     # build variational form
     VariationalForm = ( 
         inner(u - uold,v) 
         + tau*( 1.0/Re*inner( S_tensor_sym((grad(u) + grad(uold))/2.0 + grad(boundary_condition),p_value,kappa_value), epsilon(grad(v))) )
-        - inner(p - pold, div(v)) + inner(div(u), q)
+        - inner(p - pold, div(v)) + inner(div(u) - div(boundary_condition), q)
         - tau*inner(det_forcing,v)
         - dW/4.0*inner(dot(grad(u) + grad(uold), noise_coefficient), v)
         + dW/4.0*inner(dot(grad(v), noise_coefficient), u + uold)
@@ -192,7 +192,7 @@ def lid_driven_cavity_solver(space_disc: SpaceDiscretisation,
     time_to_pressure_midpoints = dict()
 
     # store initialisation of time-stepping
-    time_to_velocity[time] = deepcopy(uold)
+    time_to_velocity[time] = deepcopy(Function(space_disc.velocity_space))
     time_to_velocity_midpoints[time] = deepcopy(det_forcing)
     time_to_pressure[time] = deepcopy(pold)
     time_to_pressure_midpoints[time] = deepcopy(pold)
@@ -230,10 +230,14 @@ def lid_driven_cavity_solver(space_disc: SpaceDiscretisation,
         pressure.dat.data[:] = pressure.dat.data - Function(space_disc.pressure_space).assign(mean_p).dat.data
 
         #store solution
-        time_to_velocity[time] = deepcopy(velocity)
+        velocity_nodal = Function(space_disc.velocity_space)
+        velocity_nodal.dat.data[:] = velocity.dat.data + boundary_condition.dat.data
+        time_to_velocity[time] = deepcopy(velocity_nodal)
+
         velocity_mid = Function(space_disc.velocity_space)
-        velocity_mid.dat.data[:] = (velocity.dat.data + uold.dat.data)/2.0
+        velocity_mid.dat.data[:] = (velocity.dat.data + uold.dat.data)/2.0 + boundary_condition.dat.data
         time_to_velocity_midpoints[time] = deepcopy(velocity_mid)
+
         time_to_pressure[time] = deepcopy(pressure)
         pressure_mid = Function(space_disc.pressure_space)
         pressure_mid.dat.data[:] = (pressure.dat.data + pold.dat.data)/2.0
