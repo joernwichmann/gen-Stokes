@@ -43,8 +43,10 @@ def get_function(name_requested_function: str, space_disc: SpaceDiscretisation,
             return _trig_non_div(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space)
         case "gravity":
             return _gravity(velocity_space=space_disc.velocity_space)
-        case "lid-driven":
-            return _lid_driven(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space)
+        case "lid-driven-weak":
+            return _lid_driven_weak(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space)
+        case "lid-driven-strong":
+            return _lid_driven_strong(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space)
         
         ### Stokes projected functions
         ## returns velocity and pressure
@@ -201,10 +203,18 @@ def _polynomial_non_div(mesh: MeshGeometry, velocity_space: FunctionSpace) -> Fu
         ])
     return project(expr, velocity_space)
 
-def _lid_driven(mesh: MeshGeometry, velocity_space: FunctionSpace) -> Function:
+def _lid_driven_weak(mesh: MeshGeometry, velocity_space: FunctionSpace) -> Function:
     x, y = SpatialCoordinate(mesh)
     expr = as_vector([
         (4*y*x*(1-x)),
+        (0)
+        ])
+    return project(expr, velocity_space)
+
+def _lid_driven_strong(mesh: MeshGeometry, velocity_space: FunctionSpace) -> Function:
+    x, y = SpatialCoordinate(mesh)
+    expr = as_vector([
+        (1*y**100),
         (0)
         ])
     return project(expr, velocity_space)
