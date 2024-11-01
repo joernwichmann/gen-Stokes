@@ -1,5 +1,5 @@
 from firedrake import *
-from typing import TypeAlias, Callable, Any
+from typing import TypeAlias, Callable, Any, Tuple
 
 from src.discretisation.space import SpaceDiscretisation
 from src.discretisation.projections import Stokes_projection, HL_projection, HL_projection_withBC
@@ -7,7 +7,7 @@ from src.discretisation.projections import Stokes_projection, HL_projection, HL_
 
 ### Converter that maps string representation of functions to its implementation
 def get_function(name_requested_function: str, space_disc: SpaceDiscretisation, 
-                 index_x: int = 1, index_y: int = 1) -> Function:
+                 index_x: int = 1, index_y: int = 1) -> Function | Tuple[Function,Function]:
     """
     Return a discrete velocity field. 
 
@@ -20,6 +20,7 @@ def get_function(name_requested_function: str, space_disc: SpaceDiscretisation,
     """
     match name_requested_function:
         ### unprojected functions
+        ## returns velocity
         case "zero":
             return Function(space_disc.velocity_space)
         case "x: hill, y: wave":
@@ -42,64 +43,69 @@ def get_function(name_requested_function: str, space_disc: SpaceDiscretisation,
             return _trig_non_div(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space)
         case "gravity":
             return _gravity(velocity_space=space_disc.velocity_space)
+        case "lid-driven":
+            return _lid_driven(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space)
         
         ### Stokes projected functions
+        ## returns velocity and pressure
         case "x: hill, y: wave - Stokes projected":
-            return Stokes_projection(_hill_wave(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(_hill_wave(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "non-solenoidal - Stokes projected":
-            return Stokes_projection(_non_solenoidal(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0] 
+            return Stokes_projection(_non_solenoidal(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc) 
         case "solenoidal - Stokes projected":
-            return Stokes_projection(_solenoidal(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(_solenoidal(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "polynomial - Stokes projected":
-            return Stokes_projection(_polynomial(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(_polynomial(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "polynomial - no BC - Stokes projected":
-            return Stokes_projection(_polynomial_non_bc(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(_polynomial_non_bc(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "polynomial - no div - Stokes projected":
-            return Stokes_projection(_polynomial_non_div(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(_polynomial_non_div(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "zero - Stokes projected":
-            return Stokes_projection(Function(space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(Function(space_disc.velocity_space),space_disc)
         case "trigonometric - Stokes projected":
-            return Stokes_projection(_trig(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(_trig(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "trigonometric- no BC - Stokes projected":
-            return Stokes_projection(_trig_non_bc(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(_trig_non_bc(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "trigonometric - no div - Stokes projected":
-            return Stokes_projection(_trig_non_div(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return Stokes_projection(_trig_non_div(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         
         ### HL projected functions
+        ## returns velocity and pressure
         case "x: hill, y: wave - HL projected":
-            return HL_projection(_hill_wave(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection(_hill_wave(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "non-solenoidal - HL projected":
-            return HL_projection(_non_solenoidal(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0] 
+            return HL_projection(_non_solenoidal(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc) 
         case "solenoidal - HL projected":
-            return HL_projection(_solenoidal(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection(_solenoidal(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "polynomial - HL projected":
-            return HL_projection(_polynomial(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection(_polynomial(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "polynomial - no BC - HL projected":
-            return HL_projection(_polynomial_non_bc(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection(_polynomial_non_bc(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "polynomial - no div - HL projected":
-            return HL_projection(_polynomial_non_div(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection(_polynomial_non_div(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "trigonometric - HL projected":
-            return HL_projection(_trig(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection(_trig(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "trigonometric- no BC - HL projected":
-            return HL_projection(_trig_non_bc(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection(_trig_non_bc(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "trigonometric - no div - HL projected":
-            return HL_projection(_trig_non_div(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection(_trig_non_div(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         
         ### HL projected functions with BC
+        ## returns velocity and pressure
         case "zero - HL projected with BC":
-            return HL_projection_withBC(Function(space_disc.velocity_space),space_disc)[0]
+            return HL_projection_withBC(Function(space_disc.velocity_space),space_disc)
         case "polynomial - HL projected with BC":
-            return HL_projection_withBC(_polynomial(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection_withBC(_polynomial(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "polynomial - no BC - HL projected with BC":
-            return HL_projection_withBC(_polynomial_non_bc(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection_withBC(_polynomial_non_bc(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "polynomial - no div - HL projected with BC":
-            return HL_projection_withBC(_polynomial_non_div(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection_withBC(_polynomial_non_div(mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "trigonometric - HL projected with BC":
-            return HL_projection_withBC(_trig(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection_withBC(_trig(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "trigonometric- no BC - HL projected with BC":
-            return HL_projection_withBC(_trig_non_bc(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection_withBC(_trig_non_bc(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         case "trigonometric - no div - HL projected with BC":
-            return HL_projection_withBC(_trig_non_div(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)[0]
+            return HL_projection_withBC(_trig_non_div(j=index_x,k=index_y,mesh=space_disc.mesh,velocity_space=space_disc.velocity_space),space_disc)
         
         ### others
         case other:
@@ -195,5 +201,11 @@ def _polynomial_non_div(mesh: MeshGeometry, velocity_space: FunctionSpace) -> Fu
         ])
     return project(expr, velocity_space)
 
-
+def _lid_driven(mesh: MeshGeometry, velocity_space: FunctionSpace) -> Function:
+    x, y = SpatialCoordinate(mesh)
+    expr = as_vector([
+        (4*y*x*(1-x)),
+        (0)
+        ])
+    return project(expr, velocity_space)
         
