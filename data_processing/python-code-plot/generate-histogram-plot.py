@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 plt.rcParams['patch.edgecolor'] = 'none'
 import seaborn as sns
 from tools import read_datafile, organize_output
-import configs as cf
 
+
+### select the experiments whose data will be visualised 
+from configs import p_variation as cf
  
 if __name__=="__main__":
     print(f"Start plot of histograms in dataformat '.{cf.HIST_FILEFORMAT}' with dpi '{cf.HIST_DPI}'")
@@ -19,14 +22,14 @@ if __name__=="__main__":
                 if t >= cf.STATIONARY_TIME[noise]:
                     all_data[noise].append(l2)
         
-        print(f'Plotting data for {noise}') 
+        print(f'Plotting data for {noise}')
         if cf.LINEAR_PLOT:
             print(f'\tGenerating linear plot of histogram') 
             plt.figure()
-            sns.histplot(all_data[noise], bins="auto", stat="probability", kde=True, color=cf.COLOURS_MEAN[noise], log_scale=(True,False))
+            sns.histplot(all_data[noise], bins="auto", stat="probability", kde=True, color=cf.COLOURS_MEAN[noise], log_scale=(cf.HIST_XAXIS_LOG,False))
             plt.xlabel("Kinetic energy",fontsize=cf.LABEL_FONTSIZE)
             plt.ylabel("Probability",fontsize=cf.LABEL_FONTSIZE)
-            plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
+            #plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
             plt.yticks(fontsize=cf.TICK_FONTSIZE)
             plt.xticks(fontsize=cf.TICK_FONTSIZE)
             plt.tight_layout()
@@ -38,22 +41,30 @@ if __name__=="__main__":
             plt.figure()
             sns.histplot(all_data[noise], bins="auto", stat="probability", kde=True, color=cf.COLOURS_MEAN[noise], log_scale=(True,True))
             plt.xlabel("Kinetic energy")
-            plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
+            #plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
             plt.tight_layout()
             plt.savefig(f"hist-{noise}-log.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
             plt.close()
+    
         
 
     print(f'\nPlotting data for noise comparisons') 
+    ##legend
+    # Create dummy Line2D objects for legend
+    legendMarkers = [Line2D([0], [0.1], color=cf.COLOURS_MEAN[noise], linewidth = cf.LINEWIDTH_MEAN) for noise in cf.NOISE_TYPES]
+    #legendMarkers.append(Line2D([0], [0.1], color=cf.BLACK, linewidth = cf.LINEWIDTH_MEAN))
+    legendPvalues = [f"p = {cf.P_VALUE[noise]}" for noise in cf.NOISE_TYPES]
+    #legendPvalues.append("det")
     if cf.LINEAR_PLOT:
         print(f'\tGenerating linear plot of histogram')
         plt.figure()
         for noise in cf.NOISE_TYPES:
-            sns.histplot(all_data[noise], bins="auto", stat="probability", kde=True, color=cf.COLOURS_MEAN[noise], log_scale=(True,False))
-            plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
+            sns.histplot(all_data[noise], bins="auto", stat="probability", kde=True, color=cf.COLOURS_MEAN[noise], log_scale=(cf.HIST_XAXIS_LOG,False))
+            #plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
         plt.xlabel("Kinetic energy")
+        plt.legend(legendMarkers,legendPvalues)
         plt.tight_layout()
-        plt.savefig(f"hist-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
+        plt.savefig(f"hist-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
         plt.close()
 
     if cf.LOG_PLOT:
@@ -61,8 +72,9 @@ if __name__=="__main__":
         plt.figure()
         for noise in cf.NOISE_TYPES:
             sns.histplot(all_data[noise], bins="auto", stat="probability", kde=True, color=cf.COLOURS_MEAN[noise], log_scale=(True,True))
-            plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
+            #plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
         plt.xlabel("Kinetic energy")
+        plt.legend(legendMarkers,legendPvalues)
         plt.tight_layout()
         plt.savefig(f"hist-all-log.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
         plt.close()
