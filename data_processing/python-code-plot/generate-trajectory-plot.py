@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from tools import read_datafile, organize_output
-import configs as cf
 from tqdm import tqdm
 
-#TODO: TIKZ FONT size
+### select the experiments whose data will be visualised 
+from configs import p_variation as cf
+
 if __name__=="__main__":
     print(f"Start plot of trajectories in dataformat '.{cf.TRAJ_FILEFORMAT}' with dpi '{cf.TRAJ_DPI}'")
     
@@ -48,7 +49,7 @@ if __name__=="__main__":
     # styling the plot
     plt.ylabel("Kinetic energy")
     plt.xlabel("Time")
-    plt.yscale("log")
+    plt.yscale(cf.TRAJ_YAXIS_SCALE)
     plt.xlim(0.0,1.0)
     plt.tight_layout()
     
@@ -60,7 +61,7 @@ if __name__=="__main__":
     legendPvalues.append("det")
     plt.legend(legendMarkers,legendPvalues)
 
-    plt.savefig(f"intro-all-trajectories.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
+    plt.savefig(f"{cf.EXPERIMENT_NAME}-all-trajectories.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
     plt.close()
     print(f"Plot saved in 'intro-all-trajectories.{cf.TRAJ_FILEFORMAT}'")
 
@@ -105,7 +106,7 @@ if __name__=="__main__":
         ### styling the plot
         plt.ylabel("Kinetic energy", fontsize=cf.LABEL_FONTSIZE)
         plt.xlabel("Time", fontsize=cf.LABEL_FONTSIZE)
-        plt.yscale("log")
+        plt.yscale(cf.TRAJ_YAXIS_SCALE)
         plt.yticks(fontsize=cf.TICK_FONTSIZE)
         plt.xticks(fontsize=cf.TICK_FONTSIZE)
         plt.xlim(0.0,1.0)
