@@ -88,7 +88,8 @@ def generate(deterministic: bool = False) -> None:
 
     # define data
     logging.info(f"\nINITIAL INTENSITY:\t{gcf.INITIAL_INTENSITY}\nNOISE INTENSITY:\t{gcf.NOISE_INTENSITY}")
-    initial_condition = gcf.INITIAL_INTENSITY*get_function(gcf.INITIAL_CONDITION_NAME,space_disc,gcf.INITIAL_FREQUENZY_X,gcf.INITIAL_FREQUENZY_Y)
+    loaded_initial_velocity, _ = get_function(gcf.INITIAL_CONDITION_NAME,space_disc,gcf.INITIAL_FREQUENZY_X,gcf.INITIAL_FREQUENZY_Y)
+    initial_condition = gcf.INITIAL_INTENSITY*loaded_initial_velocity
     noise_coefficient = gcf.NOISE_INTENSITY*get_function(gcf.NOISE_COEFFICIENT_NAME,space_disc,gcf.NOISE_FREQUENZY_X,gcf.NOISE_FREQUENZY_Y)
     if deterministic:
         noise_coefficient = Function(space_disc.velocity_space)
