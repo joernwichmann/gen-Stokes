@@ -11,7 +11,7 @@ MODEL_NAME: str = "p-Stokes" #see src.algorithms.select.py for available choices
 KAPPA_VALUE: float = 0.1
 
 # Deterministic forcing
-FORCING: str = "trigonometric"   #see 'src.predefined_data' for available choices
+FORCING: str = "zero"   #see 'src.predefined_data' for available choices
 FORCING_FREQUENZY_X: int = 2
 FORCING_FREQUENZY_Y: int = 4
 FORCING_INTENSITY: float = 100
@@ -22,7 +22,7 @@ END_TIME: float = 1
 REFINEMENT_LEVELS: list[int] = list(range(4,10))
 
 # Initial data
-INITIAL_CONDITION_NAME: str = "polynomial - HL projected with BC"    #see 'src.predefined_data' for available choices
+INITIAL_CONDITION_NAME: str = "zero"    #see 'src.predefined_data' for available choices
 INITIAL_FREQUENZY_X: int = 2
 INITIAL_FREQUENZY_Y: int = 4
 INITIAL_INTENSITY: float = 1000
@@ -37,10 +37,14 @@ PRESSURE_DEGREE: int = 1
 # Mesh
 NUMBER_SPACE_POINTS: int = 12
 MESH_NAME: str = "unit square"  #see 'src.discretisation.mesh' for available choices
-NAME_BOUNDARY_CONDITION: str = "zero"  #see 'src.discretisation.mesh' for available choices
+
+# Boundary conditions # WARNING: DONT USE BOTH, IMPLICIT AND EXPLICIT BCs SIMULTANEOULSY
+NAME_BOUNDARY_CONDITION: str = "zero"  #see 'src.discretisation.mesh' for available choices ### imposes BC implicitly via firedrake blackbox
+BOUNDARY_CONDITION_EXPLICIT_NAME: str = "lid-driven-strong"
+BOUNDARY_CONDITION_EXPLICIT_INTENSITY: float = 1
 
 # Monte Carlo
-MC_SAMPLES: int = 1
+MC_SAMPLES: int = 10
 NOISE_INCREMENTS: str = "classical" # see 'src.noise' for available choices
 
 # Noise coefficient
