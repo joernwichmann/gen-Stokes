@@ -26,3 +26,6 @@ ENERGY_DIRECTORYNAME: str = f"energy_results/{NAME_EXPERIMENT}"
 
 #Statistics
 STATISTICS_DIRECTORYNAME: str = f"statistic_results/{NAME_EXPERIMENT}"
+
+#Point statistics
+POINT_STATISTICS_DIRECTORYNAME: str = f"point_statistic_results/{NAME_EXPERIMENT}"
