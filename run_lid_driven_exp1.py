@@ -24,7 +24,7 @@ from src.postprocess.time_convergence import TimeComparison
 from src.postprocess.stability_check import StabilityCheck
 from src.postprocess.energy_check import Energy
 from src.postprocess.statistics import StatisticsObject
-from src.postprocess.point_statistics import PointStatisticsObject
+from postprocess.point_statistics import PointStatistics
 from src.postprocess.processmanager import ProcessManager
 
 #load global and lokal configs
@@ -178,10 +178,9 @@ def generate(deterministic: bool = False) -> None:
         statistics_pressure_midpoints = StatisticsObject("pressure_midpoints",time_disc.ref_to_time_grid,space_disc.pressure_space)
 
     if gcf.POINT_STATISTICS_CHECK:
-        point_statistics_velocity = PointStatisticsObject("p1",time_disc.ref_to_time_grid,gcf.POINT)
-
-    if gcf.IND_POINT_STATISTICS_CHECK_NUMBER:
-        sample_to_point_statistics_velocity = dict()
+        point_statistics_velocity = ProcessManager([
+            PointStatistics(time_disc,"p1",gcf.POINT,2)
+        ])
 
     
     runtimes = {"solving": 0,"comparison": 0, "stability": 0, "energy": 0, "statistics": 0, "point-statistics": 0}
@@ -255,15 +254,9 @@ def generate(deterministic: bool = False) -> None:
 
         if gcf.POINT_STATISTICS_CHECK:
             time_mark = process_time_ns()
-            point_statistics_velocity.update(ref_to_time_to_velocity)
+            point_statistics_velocity.update(ref_to_time_to_velocity,ref_to_noise_increments)
             runtimes["point-statistics"] += process_time_ns()-time_mark
 
-        if gcf.IND_POINT_STATISTICS_CHECK_CHECK and k <= gcf.IND_POINT_STATISTICS_CHECK_NUMBER:
-            time_mark = process_time_ns()
-            ind_point_statistics_velocity = PointStatisticsObject(f"p1/individual_{k}",time_disc.ref_to_time_grid,gcf.POINT)
-            ind_point_statistics_velocity.update(ref_to_time_to_velocity)
-            sample_to_point_statistics_velocity[k] = ind_point_statistics_velocity
-            runtimes["point-statistics"] += process_time_ns()-time_mark
 
 
     
@@ -328,11 +321,8 @@ def generate(deterministic: bool = False) -> None:
             point_statistics_velocity.save(cf.POINT_STATISTICS_DIRECTORYNAME + "/deterministic")
         else:
             point_statistics_velocity.save(cf.POINT_STATISTICS_DIRECTORYNAME)
+            point_statistics_velocity.save_individual(cf.POINT_STATISTICS_DIRECTORYNAME,gcf.IND_POINT_STATISTICS_CHECK_NUMBER)
 
-    if gcf.IND_POINT_STATISTICS_CHECK_CHECK and not deterministic:
-        logging.info(format_header("POINT STATISTICS") + f"\nIndividual point statistics are stored in:\t {cf.POINT_STATISTICS_DIRECTORYNAME}/individual_")
-        for sample in sample_to_energy_check_velocity.keys():
-            sample_to_point_statistics_velocity[sample].save(cf.POINT_STATISTICS_DIRECTORYNAME)
 
 
     #show runtimes
