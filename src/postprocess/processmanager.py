@@ -8,6 +8,10 @@ class ProcessObject(Protocol):
     def save(self,*args,**kwargs) -> None:
         print("save is not implemented.")
         return
+    
+    def save_individual(self,*args,**kwargs) -> None:
+        print("save is not implemented.")
+        return
 
     def plot(self,*args,**kwargs) -> None:
         print("plot is not implemented.")
@@ -35,6 +39,10 @@ class ProcessManager:
     def save(self,*args,**kwargs) -> None:
         for process_object in self.list_of_process_objects:
             process_object.save(*args,**kwargs)
+    
+    def save_individual(self,*args,**kwargs) -> None:
+        for process_object in self.list_of_process_objects:
+            process_object.save_individual(*args,**kwargs)
     
     def plot(self,*args,**kwargs) -> None:
         for process_object in self.list_of_process_objects:
