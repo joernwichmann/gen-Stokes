@@ -4,7 +4,7 @@ from tools import read_datafile, organize_output
 from tqdm import tqdm
 
 ### select the experiments whose data will be visualised 
-from configs import p_variation as cf
+from configs import lid_driven as cf
 
 if __name__=="__main__":
     print(f"Start plot of trajectories in dataformat '.{cf.TRAJ_FILEFORMAT}' with dpi '{cf.TRAJ_DPI}'")

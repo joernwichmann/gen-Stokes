@@ -6,7 +6,7 @@ from tools import read_datafile, organize_output
 
 
 ### select the experiments whose data will be visualised 
-from configs import p_variation as cf
+from configs import lid_driven as cf
  
 if __name__=="__main__":
     print(f"Start plot of histograms in dataformat '.{cf.HIST_FILEFORMAT}' with dpi '{cf.HIST_DPI}'")
