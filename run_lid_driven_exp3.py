@@ -24,7 +24,7 @@ from src.postprocess.time_convergence import TimeComparison
 from src.postprocess.stability_check import StabilityCheck
 from src.postprocess.energy_check import Energy
 from src.postprocess.statistics import StatisticsObject
-from src.postprocess.point_statistics_new import PointStatistics
+from src.postprocess.point_statistics import PointStatistics
 from src.postprocess.processmanager import ProcessManager
 
 #load global and lokal configs
