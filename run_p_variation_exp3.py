@@ -19,13 +19,16 @@ from src.math.distances.Bochner_time import linf_X_distance, l2_X_distance, end_
 from src.math.norms.space import l2_space, h1_space, hdiv_space
 from src.math.norms.Bochner_time import linf_X_norm, l2_X_norm, end_time_X_norm, h_minus1_X_norm
 from src.math.energy import kinetic_energy, potential_energy
+from src.discretisation.projections import HL_projection_withBC
 from src.postprocess.time_convergence import TimeComparison
 from src.postprocess.stability_check import StabilityCheck
 from src.postprocess.energy_check import Energy
 from src.postprocess.statistics import StatisticsObject
+from src.postprocess.point_statistics import PointStatistics
+from src.postprocess.increments_check import IncrementCheck
 from src.postprocess.processmanager import ProcessManager
 
-#load global and local configs
+#load global and lokal configs
 from configs import p_variation_exp3 as cf
 from configs import p_variation_global as gcf
 
@@ -37,19 +40,27 @@ def generate_one(time_disc: TimeDiscretisation,
                  kappa_value: float,
                  ref_to_time_to_det_forcing: dict[int,dict[float,Function]],
                  algorithm: Algorithm,
-                 sampling_strategy: SamplingStrategy) -> tuple[dict[int,list[float]], dict[int,dict[float,Function]], dict[int,dict[float,Function]]]:
+                 sampling_strategy: SamplingStrategy) -> tuple[dict[int,list[float]],
+                                                               dict[int,dict[float,Function]],
+                                                               dict[int,dict[float,Function]],
+                                                               dict[int,dict[float,Function]],
+                                                               dict[int,dict[float,Function]]]:
     """Run the numerical experiment once. 
     
     Return noise and solution."""
     ### Generate noise on all refinement levels
     ref_to_noise_increments = sampling_strategy(time_disc.refinement_levels,time_disc.initial_time,time_disc.end_time)
+    ### initialise storage 
     ref_to_time_to_velocity = dict()
     ref_to_time_to_velocity_midpoints = dict()
     ref_to_time_to_pressure = dict()
     ref_to_time_to_pressure_midpoints = dict()
     for level in ref_to_noise_increments: 
         ### Solve algebraic system
-        ref_to_time_to_velocity[level], ref_to_time_to_pressure[level], ref_to_time_to_velocity_midpoints[level], ref_to_time_to_pressure_midpoints[level]  = algorithm(
+        (ref_to_time_to_velocity[level],
+         ref_to_time_to_pressure[level],
+         ref_to_time_to_velocity_midpoints[level],
+         ref_to_time_to_pressure_midpoints[level])  = algorithm(
             space_disc=space_disc,
             time_grid=time_disc.ref_to_time_grid[level],
             noise_steps= ref_to_noise_increments[level],
@@ -60,7 +71,11 @@ def generate_one(time_disc: TimeDiscretisation,
             time_to_det_forcing = ref_to_time_to_det_forcing[level],
             Reynolds_number=1
             )
-    return ref_to_noise_increments, ref_to_time_to_velocity, ref_to_time_to_pressure, ref_to_time_to_velocity_midpoints, ref_to_time_to_pressure_midpoints
+    return (ref_to_noise_increments,
+            ref_to_time_to_velocity,
+            ref_to_time_to_pressure,
+            ref_to_time_to_velocity_midpoints,
+            ref_to_time_to_pressure_midpoints)
 
 def generate(deterministic: bool = False) -> None:
     """Runs the experiment.
@@ -96,7 +111,7 @@ def generate(deterministic: bool = False) -> None:
     ref_to_time_to_det_forcing = {level: {time: gcf.FORCING_INTENSITY*get_function(gcf.FORCING,space_disc,gcf.FORCING_FREQUENZY_X,gcf.FORCING_FREQUENZY_Y) for time in time_disc.ref_to_time_grid[level]} for level in time_disc.refinement_levels}
     p_value = cf.P_VALUE
     kappa_value = gcf.KAPPA_VALUE
-    logging.info(f"\np-Value:\t{p_value}\nkappa-Value:\t{kappa_value}")
+    logging.info(f"\np-Value:\t{p_value}\nkappa-Value:\t{kappa_value}")    
 
     # select algorithm
     algorithm = select_algorithm(gcf.MODEL_NAME,cf.ALGORITHM_NAME)
@@ -144,8 +159,21 @@ def generate(deterministic: bool = False) -> None:
         statistics_pressure = StatisticsObject("pressure",time_disc.ref_to_time_grid,space_disc.pressure_space)
         statistics_pressure_midpoints = StatisticsObject("pressure_midpoints",time_disc.ref_to_time_grid,space_disc.pressure_space)
 
+    if gcf.POINT_STATISTICS_CHECK:
+        point_statistics_velocity = ProcessManager([
+            PointStatistics(time_disc,"p1",gcf.POINT,2)
+        ])
+
+    if gcf.INCREMENT_CHECK:
+        increment_check = ProcessManager([
+            IncrementCheck(ref_to_stepsize=time_disc.ref_to_time_stepsize,
+                           coarse_timeMesh=time_disc.ref_to_time_grid[time_disc.refinement_levels[0]],
+                           distance_name="L2-inc",
+                           space_distance=l2_distance)
+        ])
+
     
-    runtimes = {"solving": 0,"comparison": 0, "stability": 0, "energy": 0, "statistics": 0}
+    runtimes = {"solving": 0,"comparison": 0, "stability": 0, "energy": 0, "statistics": 0, "point-statistics": 0, "increment": 0}
     
     if deterministic:
         print(format_header("RUN DETERMINISTIC EXPERIMENT"))
@@ -159,7 +187,19 @@ def generate(deterministic: bool = False) -> None:
         ### get solution
         print(f"{k*100/len(new_seeds):4.2f}% completed")
         time_mark = process_time_ns()
-        ref_to_noise_increments, ref_to_time_to_velocity, ref_to_time_to_pressure, ref_to_time_to_velocity_midpoints, ref_to_time_to_pressure_midpoints = generate_one(time_disc,space_disc,initial_condition,noise_coefficient,p_value,kappa_value,ref_to_time_to_det_forcing,algorithm,sampling_strategy)
+        (ref_to_noise_increments, 
+         ref_to_time_to_velocity, 
+         ref_to_time_to_pressure, 
+         ref_to_time_to_velocity_midpoints, 
+         ref_to_time_to_pressure_midpoints) = generate_one(time_disc=time_disc,
+                                                           space_disc=space_disc,
+                                                           initial_condition=initial_condition,
+                                                           noise_coefficient=noise_coefficient,
+                                                           p_value=p_value,
+                                                           kappa_value=kappa_value,
+                                                           ref_to_time_to_det_forcing=ref_to_time_to_det_forcing,
+                                                           algorithm=algorithm,
+                                                           sampling_strategy=sampling_strategy)
         runtimes["solving"] += process_time_ns()-time_mark
 
         #update data using solution
@@ -199,6 +239,18 @@ def generate(deterministic: bool = False) -> None:
             statistics_pressure.update(ref_to_time_to_pressure)
             statistics_pressure_midpoints.update(ref_to_time_to_pressure_midpoints)
             runtimes["statistics"] += process_time_ns()-time_mark
+
+        if gcf.POINT_STATISTICS_CHECK:
+            time_mark = process_time_ns()
+            point_statistics_velocity.update(ref_to_time_to_velocity,ref_to_noise_increments)
+            runtimes["point-statistics"] += process_time_ns()-time_mark
+
+        if gcf.INCREMENT_CHECK:
+            time_mark = process_time_ns()
+            increment_check.update(ref_to_time_to_velocity)
+            runtimes["increment"] += process_time_ns()-time_mark
+
+
 
     
     ### storing processed data 
@@ -240,7 +292,7 @@ def generate(deterministic: bool = False) -> None:
         for sample in sample_to_energy_check_velocity.keys():
             sample_to_energy_check_velocity[sample].save(cf.ENERGY_DIRECTORYNAME + "/individual")
             #sample_to_energy_check_velocity[sample].plot(cf.ENERGY_DIRECTORYNAME + "/individual")
-        energy_check_velocity.save(cf.ENERGY_DIRECTORYNAME)
+        #energy_check_velocity.save(cf.ENERGY_DIRECTORYNAME)
 
 
     if gcf.STATISTICS_CHECK:
@@ -255,6 +307,27 @@ def generate(deterministic: bool = False) -> None:
             statistics_velocity_midpoints.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
             statistics_pressure.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
             statistics_pressure_midpoints.save(cf.VTK_DIRECTORY + "/" + cf.STATISTICS_DIRECTORYNAME)
+
+    if gcf.POINT_STATISTICS_CHECK:
+        logging.info(format_header("POINT STATISTICS") + f"\nPoint statistics are stored in:\t {cf.POINT_STATISTICS_DIRECTORYNAME}/")
+        if deterministic:
+            point_statistics_velocity.save(cf.POINT_STATISTICS_DIRECTORYNAME + "/deterministic")
+        else:
+            point_statistics_velocity.save(cf.POINT_STATISTICS_DIRECTORYNAME)
+            point_statistics_velocity.save_individual(cf.POINT_STATISTICS_DIRECTORYNAME,gcf.IND_POINT_STATISTICS_CHECK_NUMBER)
+
+    if gcf.INCREMENT_CHECK:
+        logging.info(format_header("INCREMENT CHECK") + f"\nIncrement check is stored in:\t {cf.INCREMENT_DIRECTORYNAME}/")
+        logging.info(increment_check)
+        if deterministic:
+            increment_check.save(cf.INCREMENT_DIRECTORYNAME + "/deterministic")
+            increment_check.plot(cf.INCREMENT_DIRECTORYNAME + "/deterministic")
+        else:
+            increment_check.save(cf.INCREMENT_DIRECTORYNAME)
+            increment_check.plot(cf.INCREMENT_DIRECTORYNAME)
+            increment_check.plot_individual(cf.INCREMENT_DIRECTORYNAME)
+            
+
 
     #show runtimes
     logging.info(format_runtime(runtimes) + "\n\n")
