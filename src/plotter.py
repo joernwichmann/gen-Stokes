@@ -1,6 +1,21 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+COLOR_LIST = {
+    0: "#a6cee3",
+    1: "#1f78b4",
+    2: "#b2df8a",
+    3: "#33a02c",
+    4: "#fb9a99",
+    5: "#e31a1c",
+    6: "#fdbf6f",
+    7: "#ff7f00",
+    8: "#cab2d6",
+    9: "#6a3d9a",
+    10: "#ffff99",
+    11: "#b15928"
+}
+
 
 def plot_ref_to_time_to_function(name_to_ref_to_time_to_number: dict[str,dict[int,dict[float,float]]],
                                  filename: str,
