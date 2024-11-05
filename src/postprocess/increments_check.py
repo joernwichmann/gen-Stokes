@@ -70,7 +70,7 @@ class IncrementCheck(ProcessObject):
                         for time in self.ref_to_time_to_seed_to_incrementValue[level].keys()}
                 for level in self.ref_to_time_to_seed_to_incrementValue.keys()}
     
-    @property
+    @cached_property
     def time_to_ref_to_norm_l1(self) -> dict[int,dict[int,float]]:
         if len(self.ref_to_time_to_norm_l1) == 0:
             return dict()
