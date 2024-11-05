@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 from tools_point_statistics import read_datafile, organize_output, organize_output_single
 from tqdm import tqdm
 
@@ -23,6 +24,8 @@ if __name__=="__main__":
             time, val_0, val_1 = organize_output_single(complete_data)
             plt.plot(val_0,val_1,color = cf.COLOURS_INDIVIDUAL[expID],linewidth=cf.LINEWIDTH_INDIVIDUAL,alpha=cf.LINEOPACITY_INDIVIDUAL)
 
+    legendMarkers = [] 
+    legendEntries = []
     #plot mean and standard deviations
     print(f"\tPlotting mean, standard devations and deterministic")
     for expID in cf.EXPERIMENTS.keys():
@@ -55,12 +58,16 @@ if __name__=="__main__":
         plt.plot(l1_0,l1_1,color = cf.BLACK,linewidth=1,alpha=cf.LINEOPACITY_MEAN)
         plt.plot(cf.STATIONARY_VAL_X[expID],cf.STATIONARY_VAL_Y[expID], marker = "o",color=cf.COLOURS_MEAN[expID])
         
+        #define legend
+        legendMarkers.append(Line2D([0], [0.1], color=cf.COLOURS_MEAN[expID], linewidth = cf.LINEWIDTH_MEAN))
+        legendEntries.append(f"p = {cf.P_VALUE[expID]}")
     
     # styling the plot
     plt.ylabel("y")
     plt.xlabel("x")
     plt.title('velocity @ [0.5,0.75]')
     #plt.xlim(0.0,1.0)
+    plt.legend(legendMarkers,legendEntries)
     plt.tight_layout()
     plt.savefig(f"point-{cf.EXPERIMENT_NAME}-all-trajectories.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
     plt.close()
@@ -70,7 +77,7 @@ if __name__=="__main__":
     ############# Plot of energies for fixed noise type
     ###################################################################     
     # #plot individual energy trajectory
-    for expID in cf.EXPERIMENTS.keys():
+    for k, expID in enumerate(cf.EXPERIMENTS.keys()):
         print(f'\nGenerating trajectory plot for Experiment {cf.EXPERIMENTS[expID]}')
         plt.figure()
 
@@ -120,6 +127,7 @@ if __name__=="__main__":
         plt.yticks(fontsize=cf.TICK_FONTSIZE)
         plt.xticks(fontsize=cf.TICK_FONTSIZE)
         #plt.xlim(0.0,1.0)
+        plt.legend([legendMarkers[k]],[legendEntries[k]])
         plt.tight_layout()
         plt.savefig(f"point-{cf.EXPERIMENTS[expID]}-trajectories.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
         plt.close()
