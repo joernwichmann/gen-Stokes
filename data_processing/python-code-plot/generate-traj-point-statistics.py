@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 from tools_point_statistics import read_datafile, organize_output, organize_output_single
-from configs import lid_driven_point_statistics as cf
 from tqdm import tqdm
 
-#TODO: TIKZ FONT size
+### select the experiments whose data will be visualised 
+from configs import p_variation_point_statistics as cf
+
 if __name__=="__main__":
     print(f"Start plot of trajectories in dataformat '.{cf.TRAJ_FILEFORMAT}' with dpi '{cf.TRAJ_DPI}'")
     

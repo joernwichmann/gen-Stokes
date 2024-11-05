@@ -4,9 +4,10 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 from tools_point_statistics import read_datafile, organize_output_single
-from configs import lid_driven_point_statistics as cf
-
  
+### select the experiments whose data will be visualised 
+from configs import p_variation_point_statistics as cf
+
 if __name__=="__main__":
     print(f"Start plot of histograms in dataformat '.{cf.HIST_FILEFORMAT}' with dpi '{cf.HIST_DPI}'")
     all_data_x = dict()
@@ -60,5 +61,5 @@ if __name__=="__main__":
     for expID in cf.EXPERIMENTS.keys():
         plt.plot(cf.STATIONARY_VAL_X[expID],cf.STATIONARY_VAL_Y[expID], marker = "o", color=cf.COLOURS_MEAN[expID])
     plt.tight_layout()
-    plt.savefig(f"hist-point-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
+    plt.savefig(f"hist-point-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
     plt.close()
