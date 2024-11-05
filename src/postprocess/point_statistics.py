@@ -163,13 +163,12 @@ class PointStatistics(ProcessObject):
             new_dict_name = name_directory + "/" + self.point_name + f"/seed_{sample}"
             if not os.path.isdir(new_dict_name):
                 os.makedirs(new_dict_name)
-
-                for level in self.time_disc.refinement_levels:
-                    outfile = new_dict_name + "/refinement_" + str(level) + ".csv"
-                    with open(outfile,"w",newline="") as file:
-                        writer = csv.writer(file)
-                        writer.writerow(header)
-                        writer.writerows(seed_to_ref_to_data[sample][level])
+            for level in self.time_disc.refinement_levels:
+                outfile = new_dict_name + "/refinement_" + str(level) + ".csv"
+                with open(outfile,"w",newline="") as file:
+                    writer = csv.writer(file)
+                    writer.writerow(header)
+                    writer.writerows(seed_to_ref_to_data[sample][level])
 
     def plot(self, name_directory: str) -> None:
         return
