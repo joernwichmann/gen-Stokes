@@ -42,3 +42,6 @@ STATISTICS_DIRECTORYNAME: str = f"statistic_results/{NAME_EXPERIMENT}"
 
 #Point statistics
 POINT_STATISTICS_DIRECTORYNAME: str = f"point_statistic_results/{NAME_EXPERIMENT}"
+
+#Increment check
+INCREMENT_DIRECTORYNAME: str = f"increment_results/{NAME_EXPERIMENT}"

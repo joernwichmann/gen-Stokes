@@ -25,6 +25,7 @@ from src.postprocess.stability_check import StabilityCheck
 from src.postprocess.energy_check import Energy
 from src.postprocess.statistics import StatisticsObject
 from src.postprocess.point_statistics import PointStatistics
+from src.postprocess.increments_check import IncrementCheck
 from src.postprocess.processmanager import ProcessManager
 
 #load global and lokal configs
@@ -182,8 +183,16 @@ def generate(deterministic: bool = False) -> None:
             PointStatistics(time_disc,"p1",gcf.POINT,2)
         ])
 
+    if gcf.INCREMENT_CHECK:
+        increment_check = ProcessManager([
+            IncrementCheck(ref_to_stepsize=time_disc.ref_to_time_stepsize,
+                           coarse_timeMesh=time_disc.ref_to_time_grid[time_disc.refinement_levels[0]],
+                           distance_name="L2-inc",
+                           space_distance=l2_distance)
+        ])
+
     
-    runtimes = {"solving": 0,"comparison": 0, "stability": 0, "energy": 0, "statistics": 0, "point-statistics": 0}
+    runtimes = {"solving": 0,"comparison": 0, "stability": 0, "energy": 0, "statistics": 0, "point-statistics": 0, "increment": 0}
     
     if deterministic:
         print(format_header("RUN DETERMINISTIC EXPERIMENT"))
@@ -257,6 +266,11 @@ def generate(deterministic: bool = False) -> None:
             point_statistics_velocity.update(ref_to_time_to_velocity,ref_to_noise_increments)
             runtimes["point-statistics"] += process_time_ns()-time_mark
 
+        if gcf.INCREMENT_CHECK:
+            time_mark = process_time_ns()
+            increment_check.update(ref_to_time_to_velocity)
+            runtimes["increment"] += process_time_ns()-time_mark
+
 
 
     
@@ -323,6 +337,17 @@ def generate(deterministic: bool = False) -> None:
             point_statistics_velocity.save(cf.POINT_STATISTICS_DIRECTORYNAME)
             point_statistics_velocity.save_individual(cf.POINT_STATISTICS_DIRECTORYNAME,gcf.IND_POINT_STATISTICS_CHECK_NUMBER)
 
+    if gcf.INCREMENT_CHECK:
+        logging.info(format_header("INCREMENT CHECK") + f"\nIncrement check is stored in:\t {cf.INCREMENT_DIRECTORYNAME}/")
+        logging.info(increment_check)
+        if deterministic:
+            increment_check.save(cf.INCREMENT_DIRECTORYNAME + "/deterministic")
+            increment_check.plot(cf.INCREMENT_DIRECTORYNAME + "/deterministic")
+        else:
+            increment_check.save(cf.INCREMENT_DIRECTORYNAME)
+            increment_check.plot(cf.INCREMENT_DIRECTORYNAME)
+            increment_check.plot_individual(cf.INCREMENT_DIRECTORYNAME)
+            
 
 
     #show runtimes
