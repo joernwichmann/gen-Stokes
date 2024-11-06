@@ -10,7 +10,7 @@ IND_LOCATION = "/individual/ind_kinetic_energy"
 DATA_SOURCE = "refinement_9.csv"
 
 #### stochatic
-NUMBER_SAMPLES = 10
+NUMBER_SAMPLES = 100
 NOISE_TYPES = ["lid-driven_exp1", "lid-driven_exp2", "lid-driven_exp3"]
 
 #### matching experiment to its p-value

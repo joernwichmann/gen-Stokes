@@ -1,7 +1,7 @@
 '''Configs of all plots'''
 
 EXPERIMENT_NAME = "p-variation"
-EXPERIMENTS = {1: f"{EXPERIMENT_NAME}_exp1", 2: f"{EXPERIMENT_NAME}_exp3", 3: f"{EXPERIMENT_NAME}_exp3" }
+EXPERIMENTS = {1: f"{EXPERIMENT_NAME}_exp1", 2: f"{EXPERIMENT_NAME}_exp2", 3: f"{EXPERIMENT_NAME}_exp3" }
 #### matching experiment to its p-value
 P_VALUE = {1: 3/2.0, 2: 2, 3: 3}
 
@@ -13,16 +13,16 @@ IND_LOCATION = "/p1/seed"
 DATA_SOURCE = "/refinement_10.csv"
 
 #### stochatic
-NUMBER_SAMPLES = 50
+NUMBER_SAMPLES = 100
 
 #### stationary
 STATIONARY_TIME = {1: 0.4, 2: 0.4, 3: 0.4}
-STATIONARY_VAL_X = {1:0.047111567787737,
-                    2:0.014910061515109253,
-                    3:0.010145254230107842}
-STATIONARY_VAL_Y = {1:3.732123649988371,
-                    2:0.001796688611121015,
-                    3:0.23141628598386685}
+STATIONARY_VAL_X = {1:0.044043617290565246,
+                    2:-0.014916417092931724,
+                    3:-0.010145255394873131}
+STATIONARY_VAL_Y = {1:3.7317082618283726,
+                    2:0.5703828845767361,
+                    3:0.23141628595966934}
 
 #### plotting configs
 # colours

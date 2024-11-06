@@ -13,16 +13,16 @@ IND_LOCATION = "/p1/seed"
 DATA_SOURCE = "/refinement_9.csv"
 
 #### stochatic
-NUMBER_SAMPLES = 10
+NUMBER_SAMPLES = 100
 
 #### stationary
 #STATIONARY_TIME = {1: 0.13, 2: 0.32, 3: 0.13}
 STATIONARY_TIME = {1: 0.4, 2: 0.4, 3: 0.4}
-STATIONARY_VAL_X = {1:0.027870811123365345,
-                    2:0.0018390038770400882,
+STATIONARY_VAL_X = {1:-0.027870811123365345,
+                    2:-0.0018390038770400882,
                     3:0.05266201306509131}
 STATIONARY_VAL_Y = {1:0.0018067095598706987,
-                    2:0.001796688611121015,
+                    2:0.0017966886111210152,
                     3:0.0027004089468416533}
 
 #### plotting configs

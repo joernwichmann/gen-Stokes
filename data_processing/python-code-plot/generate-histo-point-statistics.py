@@ -39,6 +39,9 @@ if __name__=="__main__":
         #plt.yticks(fontsize=cf.TICK_FONTSIZE)
         #plt.xticks(fontsize=cf.TICK_FONTSIZE)
         plt.plot(cf.STATIONARY_VAL_X[expID],cf.STATIONARY_VAL_Y[expID], marker = "o",color=cf.COLOURS_MEAN[expID])
+        plt.xlabel("x")
+        plt.ylabel("y")
+        #plt.title('velocity at (0.5,0.75)')
         plt.tight_layout()
         plt.savefig(f"hist-point-{cf.EXPERIMENTS[expID]}.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
         plt.close()        
@@ -60,6 +63,7 @@ if __name__=="__main__":
     sns.jointplot(data = build_data, x = "x", y="y",  hue="experiment", kind="kde", palette=customPalette)
     for expID in cf.EXPERIMENTS.keys():
         plt.plot(cf.STATIONARY_VAL_X[expID],cf.STATIONARY_VAL_Y[expID], marker = "o", color=cf.COLOURS_MEAN[expID])
+    #plt.title('velocity at (0.5,0.75)')
     plt.tight_layout()
     plt.savefig(f"hist-point-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
     plt.close()
