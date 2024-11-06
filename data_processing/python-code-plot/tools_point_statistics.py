@@ -14,25 +14,17 @@ def read_datafile(location: str):
    
 def organize_output(output):
     time = []
-    l1_0 = []
-    l1_1 = []
-    l2_0 = []
-    l2_1 = []
-    linf_0 = []
-    linf_1 = []
+    mean_0 = []
+    mean_1 = []
     sd_0 = []
     sd_1 = []
     for row in output:
         time.append(row[0])
-        l1_0.append(row[1])
-        l1_1.append(row[2])
-        l2_0.append(row[3])
-        l2_1.append(row[4])
-        linf_0.append(row[5])
-        linf_1.append(row[6])
-        sd_0.append(row[7])
-        sd_1.append(row[8])
-    return time, l1_0, l1_1, l2_0, l2_1, linf_0, linf_1, sd_0, sd_1
+        mean_0.append(row[1])
+        mean_1.append(row[2])
+        sd_0.append(row[3])
+        sd_1.append(row[4])
+    return time, mean_0, mean_1, sd_0, sd_1
 
 def organize_output_single(output):
     time = []
