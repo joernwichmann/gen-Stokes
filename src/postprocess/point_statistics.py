@@ -7,7 +7,7 @@ from numpy import ndarray
 from src.utils import swap_dictionary_keys
 from src.discretisation.time import TimeDiscretisation
 from src.math.norms.stochastic import l1_stochastic, l2_stochastic, linf_stochastic
-from src.math.statistics import standard_deviation
+from src.math.statistics import standard_deviation, mean_value
 from src.plotter import plot_ref_to_time_to_function, plot_seed_to_time_to_number, plot_seed_to_time_to_number_and_increments
 from src.postprocess.processmanager import ProcessObject
 
@@ -66,24 +66,8 @@ class PointStatistics(ProcessObject):
         return swap_dictionary_keys(self.seed_to_ref_to_noise_increments)
     
     @property
-    def ref_to_comp_to_time_to_value_l1(self) -> dict[int,dict[int,dict[float,list[float]]]]:
-        ref_to_time_to_funcAtpoint = {level: {component: {time: l1_stochastic(self.ref_to_comp_to_time_to_seed_to_value[level][component][time].values()) 
-                                                          for time in self.ref_to_comp_to_time_to_seed_to_value[level][component]} 
-                                              for component in self.ref_to_comp_to_time_to_seed_to_value[level]} 
-                                for level in self.ref_to_comp_to_time_to_seed_to_value}
-        return ref_to_time_to_funcAtpoint
-    
-    @property
-    def ref_to_comp_to_time_to_value_l2(self) -> dict[int,dict[int,dict[float,list[float]]]]:
-        ref_to_time_to_funcAtpoint = {level: {component: {time: l2_stochastic(self.ref_to_comp_to_time_to_seed_to_value[level][component][time].values()) 
-                                                          for time in self.ref_to_comp_to_time_to_seed_to_value[level][component]} 
-                                              for component in self.ref_to_comp_to_time_to_seed_to_value[level]} 
-                                for level in self.ref_to_comp_to_time_to_seed_to_value}
-        return ref_to_time_to_funcAtpoint
-    
-    @property
-    def ref_to_comp_to_time_to_value_linf(self) -> dict[int,dict[int,dict[float,list[float]]]]:
-        ref_to_time_to_funcAtpoint = {level: {component: {time: linf_stochastic(self.ref_to_comp_to_time_to_seed_to_value[level][component][time].values()) 
+    def ref_to_comp_to_time_to_value_mean(self) -> dict[int,dict[int,dict[float,list[float]]]]:
+        ref_to_time_to_funcAtpoint = {level: {component: {time: mean_value(self.ref_to_comp_to_time_to_seed_to_value[level][component][time].values()) 
                                                           for time in self.ref_to_comp_to_time_to_seed_to_value[level][component]} 
                                               for component in self.ref_to_comp_to_time_to_seed_to_value[level]} 
                                 for level in self.ref_to_comp_to_time_to_seed_to_value}
@@ -99,25 +83,21 @@ class PointStatistics(ProcessObject):
     
     def save(self, name_directory: str) -> None:
         """Save 'time -> funcAtpoint' in .csv files."""
+        #construct header
         header = ["time"]
-        header += [f"L1_{component}" for component in range(self.func_dim)]
-        header += [f"L2_{component}" for component in range(self.func_dim)]
-        header += [f"Linf_{component}" for component in range(self.func_dim)]
-        header += [f"SD_{component}" for component in range(self.func_dim)]
+        header += [f"f_{component}-mean" for component in range(self.func_dim)]
+        header += [f"f_{component}-SD" for component in range(self.func_dim)]
+
         ref_to_data = {}
         for level in self.time_disc.refinement_levels:
             data = []
             for time in self.time_disc.ref_to_time_grid[level]:
-                l1 = []
-                l2 = []
-                linf = []
-                SD = []
+                mean = []
+                sd = []
                 for component in range(self.func_dim):
-                    l1.append(self.ref_to_comp_to_time_to_value_l1[level][component][time])
-                    l2.append(self.ref_to_comp_to_time_to_value_l2[level][component][time])
-                    linf.append(self.ref_to_comp_to_time_to_value_linf[level][component][time])
-                    SD.append(self.ref_to_comp_to_time_to_value_SD[level][component][time])
-                data.append([time] + l1 + l2 + linf + SD)
+                    mean.append(self.ref_to_comp_to_time_to_value_mean[level][component][time])
+                    sd.append(self.ref_to_comp_to_time_to_value_SD[level][component][time])
+                data.append([time] + mean + sd)
             ref_to_data[level] = data
             
         if not os.path.isdir(name_directory):
@@ -138,7 +118,7 @@ class PointStatistics(ProcessObject):
         """Save 'time -> funcAtpoint' in .csv files."""
         #construct header
         header = ["time"]
-        header += [f"f(point)_{component}" for component in range(self.func_dim)]
+        header += [f"f_{component}" for component in range(self.func_dim)]
 
         #construct data
         seed_to_ref_to_data = dict()
