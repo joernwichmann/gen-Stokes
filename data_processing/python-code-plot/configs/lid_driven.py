@@ -9,6 +9,9 @@ DET_LOCATION = "/deterministic/kinetic_energy/"
 IND_LOCATION = "/individual/ind_kinetic_energy"
 DATA_SOURCE = "refinement_9.csv"
 
+#### output 
+OUTPUT_LOCATION = f"output/{EXPERIMENT_NAME}/kinetic_energy/"
+
 #### stochatic
 NUMBER_SAMPLES = 100
 NOISE_TYPES = ["lid-driven_exp1", "lid-driven_exp2", "lid-driven_exp3"]

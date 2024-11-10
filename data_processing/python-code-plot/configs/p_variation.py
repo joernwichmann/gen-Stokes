@@ -7,10 +7,13 @@ ROOT_LOCATION = "../../energy_results/"
 MEAN_LOCATION = "/kinetic_energy/"
 DET_LOCATION = "/deterministic/kinetic_energy/"
 IND_LOCATION = "/individual/ind_kinetic_energy"
-DATA_SOURCE = "refinement_9.csv"
+DATA_SOURCE = "refinement_10.csv"
+
+#### output 
+OUTPUT_LOCATION = f"output/{EXPERIMENT_NAME}/kinetic_energy/"
 
 #### stochatic
-NUMBER_SAMPLES = 1000
+NUMBER_SAMPLES = 100
 NOISE_TYPES = ["p-variation_exp1", "p-variation_exp2", "p-variation_exp3"]
 
 #### matching experiment to its p-value

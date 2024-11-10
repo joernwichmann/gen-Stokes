@@ -11,6 +11,9 @@ DET_LOCATION = "/deterministic"
 MEAN_LOCATION = ""
 DATA_SOURCE = "/L2-inc.csv"
 
+#### output 
+OUTPUT_LOCATION = f"output/{EXPERIMENT_NAME}/increments/"
+
 #### stochatic
 NUMBER_SAMPLES = 100
 

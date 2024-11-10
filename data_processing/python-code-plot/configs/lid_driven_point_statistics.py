@@ -12,6 +12,9 @@ MEAN_LOCATION = "/p1/mean"
 IND_LOCATION = "/p1/seed"
 DATA_SOURCE = "/refinement_9.csv"
 
+#### output 
+OUTPUT_LOCATION = f"output/{EXPERIMENT_NAME}/point_statistics/"
+
 #### stochatic
 NUMBER_SAMPLES = 100
 
