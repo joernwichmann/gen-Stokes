@@ -3,12 +3,17 @@ plt.rcParams['patch.edgecolor'] = 'none'
 import seaborn as sns
 import numpy as np
 import pandas as pd
+import os
 from tools_point_statistics import read_datafile, organize_output_single
  
 ### select the experiments whose data will be visualised 
 from configs import p_variation_point_statistics as cf
 
 if __name__=="__main__":
+    ### create output directory
+    if not os.path.isdir(cf.OUTPUT_LOCATION):
+            os.makedirs(cf.OUTPUT_LOCATION)
+
     print(f"Start plot of histograms in dataformat '.{cf.HIST_FILEFORMAT}' with dpi '{cf.HIST_DPI}'")
     all_data_x = dict()
     all_data_y = dict()
@@ -43,9 +48,9 @@ if __name__=="__main__":
         plt.ylabel("y")
         #plt.title('velocity at (0.5,0.75)')
         plt.tight_layout()
-        plt.savefig(f"hist-point-{cf.EXPERIMENTS[expID]}.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
+        plt.savefig(cf.OUTPUT_LOCATION + f"hist-point-{cf.EXPERIMENTS[expID]}.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
         plt.close()        
-    
+        print(f"Plot saved in '{cf.OUTPUT_LOCATION}hist-point-{cf.EXPERIMENTS[expID]}.{cf.HIST_FILEFORMAT}'")
 
     #build pandas.dataframe
     prebuild = []
@@ -65,5 +70,6 @@ if __name__=="__main__":
         plt.plot(cf.STATIONARY_VAL_X[expID],cf.STATIONARY_VAL_Y[expID], marker = "o", color=cf.COLOURS_MEAN[expID])
     #plt.title('velocity at (0.5,0.75)')
     plt.tight_layout()
-    plt.savefig(f"hist-point-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
+    plt.savefig(cf.OUTPUT_LOCATION + f"hist-point-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
     plt.close()
+    print(f"Plot saved in '{cf.OUTPUT_LOCATION}hist-point-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}'")

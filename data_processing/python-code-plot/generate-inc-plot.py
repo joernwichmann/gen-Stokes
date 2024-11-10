@@ -1,13 +1,17 @@
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from tools_inc import read_datafile, organize_output
-from tqdm import tqdm
+import os
 
 ### select the experiments whose data will be visualised 
-from configs import lid_driven_inc as cf
+from configs import p_variation_inc as cf
 
 if __name__=="__main__":
     print(f"Start plot of increments in dataformat '.{cf.TRAJ_FILEFORMAT}' with dpi '{cf.TRAJ_DPI}'")
+
+    ### create output directory
+    if not os.path.isdir(cf.OUTPUT_LOCATION):
+            os.makedirs(cf.OUTPUT_LOCATION)
     
     ################################################################### 
     ################## comparison between noise types
@@ -50,9 +54,9 @@ if __name__=="__main__":
     #plt.xlim(0.0,1.0)
     plt.legend(legendMarkers,legendEntries)
     plt.tight_layout()
-    plt.savefig(f"{cf.EXPERIMENT_NAME}-comp-increments.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
+    plt.savefig(cf.OUTPUT_LOCATION+f"{cf.EXPERIMENT_NAME}-comp-increments.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
     plt.close()
-    print(f"Plot saved in '{cf.EXPERIMENT_NAME}-comp-increments.{cf.TRAJ_FILEFORMAT}'")
+    print(f"Plot saved in '{cf.OUTPUT_LOCATION}{cf.EXPERIMENT_NAME}-comp-increments.{cf.TRAJ_FILEFORMAT}'")
 
     ################################################################### 
     ############# Plot of energies for fixed noise type
@@ -91,9 +95,9 @@ if __name__=="__main__":
         #plt.xlim(0.0,1.0)
         plt.legend(legendMarkers,legendEntries)
         plt.tight_layout()
-        plt.savefig(f"{cf.EXPERIMENTS[expID]}-increments.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
+        plt.savefig(cf.OUTPUT_LOCATION+f"{cf.EXPERIMENTS[expID]}-increments.{cf.TRAJ_FILEFORMAT}",dpi=cf.TRAJ_DPI)
         plt.close()
-        print(f"Plot saved in '{cf.EXPERIMENTS[expID]}-increments.{cf.TRAJ_FILEFORMAT}'")
+        print(f"Plot saved in '{cf.OUTPUT_LOCATION}{cf.EXPERIMENTS[expID]}-increments.{cf.TRAJ_FILEFORMAT}'")
 
 
 

@@ -2,13 +2,18 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 plt.rcParams['patch.edgecolor'] = 'none'
 import seaborn as sns
+import os
 from tools import read_datafile, organize_output
 
 
 ### select the experiments whose data will be visualised 
-from configs import lid_driven as cf
+from configs import p_variation as cf
  
 if __name__=="__main__":
+
+    ### create output directory
+    if not os.path.isdir(cf.OUTPUT_LOCATION):
+            os.makedirs(cf.OUTPUT_LOCATION)
     print(f"Start plot of histograms in dataformat '.{cf.HIST_FILEFORMAT}' with dpi '{cf.HIST_DPI}'")
     all_data = {noise: [] for noise in cf.NOISE_TYPES}
 
@@ -33,8 +38,9 @@ if __name__=="__main__":
             plt.yticks(fontsize=cf.TICK_FONTSIZE)
             plt.xticks(fontsize=cf.TICK_FONTSIZE)
             plt.tight_layout()
-            plt.savefig(f"hist-{noise}.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
-            plt.close()        
+            plt.savefig(cf.OUTPUT_LOCATION+f"hist-{noise}.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
+            plt.close()
+            print(f"Plot saved in '{cf.OUTPUT_LOCATION}hist-{noise}.{cf.HIST_FILEFORMAT}.{cf.TRAJ_FILEFORMAT}'")        
         
         if cf.LOG_PLOT:
             print(f'\tGenerating log plot of histogram') 
@@ -43,8 +49,9 @@ if __name__=="__main__":
             plt.xlabel("Kinetic energy")
             #plt.vlines(x=cf.STATIONARY_ENERGY[noise],ymin=0,ymax=cf.YMAX[noise],colors="black",linestyles="solid")
             plt.tight_layout()
-            plt.savefig(f"hist-{noise}-log.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
+            plt.savefig(cf.OUTPUT_LOCATION+f"hist-{noise}-log.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
             plt.close()
+            print(f"Plot saved in '{cf.OUTPUT_LOCATION}hist-{noise}-log.{cf.HIST_FILEFORMAT}.{cf.TRAJ_FILEFORMAT}'")
     
         
 
@@ -64,8 +71,9 @@ if __name__=="__main__":
         plt.xlabel("Kinetic energy")
         plt.legend(legendMarkers,legendPvalues)
         plt.tight_layout()
-        plt.savefig(f"hist-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
+        plt.savefig(cf.OUTPUT_LOCATION+f"hist-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
         plt.close()
+        print(f"Plot saved in '{cf.OUTPUT_LOCATION}hist-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}'")
 
     if cf.LOG_PLOT:
         print(f'\tGenerating log plot of histogram')
@@ -76,5 +84,6 @@ if __name__=="__main__":
         plt.xlabel("Kinetic energy")
         plt.legend(legendMarkers,legendPvalues)
         plt.tight_layout()
-        plt.savefig(f"hist-all-log.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
+        plt.savefig(cf.OUTPUT_LOCATION+f"hist-{cf.EXPERIMENT_NAME}-all-log.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
         plt.close()
+        print(f"Plot saved in '{cf.OUTPUT_LOCATION}hist-{cf.EXPERIMENT_NAME}-all-log.{cf.HIST_FILEFORMAT}'")
