@@ -1,42 +1,39 @@
 '''Configs of all plots'''
 ### Name
 EXPERIMENT_NAME = "p-variation"
+EXPERIMENTS = {1: f"{EXPERIMENT_NAME}_exp1", 2: f"{EXPERIMENT_NAME}_exp2", 3: f"{EXPERIMENT_NAME}_exp3" }
+
+#### matching experiment to its p-value
+P_VALUE = {1: 3/2.0, 2: 2, 3: 3}
 
 #### locations 
 ROOT_LOCATION = "../../energy_results/"
 MEAN_LOCATION = "/kinetic_energy/"
 DET_LOCATION = "/deterministic/kinetic_energy/"
 IND_LOCATION = "/individual/ind_kinetic_energy"
-DATA_SOURCE = "refinement_10.csv"
+DATA_SOURCE = "refinement_9.csv"
 
 #### output 
 OUTPUT_LOCATION = f"output/{EXPERIMENT_NAME}/kinetic_energy/"
 
 #### stochatic
 NUMBER_SAMPLES = 100
-NOISE_TYPES = ["p-variation_exp1", "p-variation_exp2", "p-variation_exp3"]
-
-#### matching experiment to its p-value
-P_VALUE = {"p-variation_exp1": 3/2.0, "p-variation_exp2": 2, "p-variation_exp3": 3}
 
 #### stationary
-STATIONARY_TIME = {"p-variation_exp1": 0.4, "p-variation_exp2": 0.2, "p-variation_exp3": 0.1}
-STATIONARY_ENERGY = {#"p-variation_exp1": 9.2212513268467,
-                     "p-variation_exp1": 0.2212513268467,
-                     "p-variation_exp2": 0.167573589997039,
-                     "p-variation_exp3": 0.0227904530427081}
+STATIONARY_TIME = {1: 0.5, 2: 0.5, 3: 0.5}
 
 #### plotting configs
 # colours
-COLOURS_MEAN = {"p-variation_exp1": "#1b9e77", "p-variation_exp2": "#d95f02", "p-variation_exp3": "#7570b3"}
-COLOURS_INDIVIDUAL  = {"p-variation_exp1": "#66c2a5", "p-variation_exp2": "#fc8d62", "p-variation_exp3": "#8da0cb"}
+COLOURS_MEAN = {1: "#1b9e77", 2: "#d95f02", 3: "#7570b3"}
+COLOURS_INDIVIDUAL  = {1: "#66c2a5", 2: "#fc8d62", 3: "#8da0cb"}
 BLACK = "#000000"
 
 # histogram plot
 HIST_DPI = 300
 HIST_FILEFORMAT = "pdf"
 
-YMAX =  {"p-variation_exp1": 0.06, "p-variation_exp2": 0.016, "p-variation_exp3": 0.014}
+#ymax should be dynamic
+YMAX =  {1: 0.06, 2: 0.016, 3: 0.014}
 LINEAR_PLOT = True
 LOG_PLOT = False
 HIST_XAXIS_LOG: bool = True
@@ -58,4 +55,6 @@ LINEOPACITY_INDIVIDUAL = 1
 LABEL_FONTSIZE = 20
 TICK_FONTSIZE = 20
 TRAJ_YAXIS_SCALE = "log"
+
+LINESTYLES_DET = {1: "dotted", 2: "dashed", 3: "dashdot"}
 

@@ -1,6 +1,10 @@
 '''Configs of all plots'''
 ### Name
 EXPERIMENT_NAME = "lid-driven"
+EXPERIMENTS = {1: f"{EXPERIMENT_NAME}_exp1", 2: f"{EXPERIMENT_NAME}_exp2", 3: f"{EXPERIMENT_NAME}_exp3" }
+
+#### matching experiment to its p-value
+P_VALUE = {1: 3/2.0, 2: 2, 3: 3}
 
 #### locations 
 ROOT_LOCATION = "../../energy_results/"
@@ -14,26 +18,22 @@ OUTPUT_LOCATION = f"output/{EXPERIMENT_NAME}/kinetic_energy/"
 
 #### stochatic
 NUMBER_SAMPLES = 100
-NOISE_TYPES = ["lid-driven_exp1", "lid-driven_exp2", "lid-driven_exp3"]
-
-#### matching experiment to its p-value
-P_VALUE = {"lid-driven_exp1": 3/2.0, "lid-driven_exp2": 2, "lid-driven_exp3": 3}
 
 #### stationary
-STATIONARY_TIME = {"lid-driven_exp1": 0.4, "lid-driven_exp2": 0.2, "lid-driven_exp3": 0.1}
-STATIONARY_ENERGY = {"lid-driven_exp1": 0.00864871866995075, "lid-driven_exp2": 0.013356505566619, "lid-driven_exp3": 0.0181430728419994}
+STATIONARY_TIME = {1: 0.4, 2: 0.4, 3: 0.4}
 
 #### plotting configs
 # colours
-COLOURS_MEAN = {"lid-driven_exp1": "#1b9e77", "lid-driven_exp2": "#d95f02", "lid-driven_exp3": "#7570b3"}
-COLOURS_INDIVIDUAL  = {"lid-driven_exp1": "#66c2a5", "lid-driven_exp2": "#fc8d62", "lid-driven_exp3": "#8da0cb"}
+COLOURS_MEAN = {1: "#1b9e77", 2: "#d95f02", 3: "#7570b3"}
+COLOURS_INDIVIDUAL  = {1: "#66c2a5", 2: "#fc8d62", 3: "#8da0cb"}
 BLACK = "#000000"
 
 # histogram plot
 HIST_DPI = 300
 HIST_FILEFORMAT = "pdf"
 
-YMAX =  {"lid-driven_exp1": 0.06, "lid-driven_exp2": 0.016, "lid-driven_exp3": 0.014}
+#ymax should be dynamic
+YMAX =  {1: 0.06, 2: 0.016, 3: 0.014}
 LINEAR_PLOT = True
 LOG_PLOT = False
 HIST_XAXIS_LOG: bool = False
@@ -55,4 +55,6 @@ LINEOPACITY_INDIVIDUAL = 1
 LABEL_FONTSIZE = 20
 TICK_FONTSIZE = 20
 TRAJ_YAXIS_SCALE = "linear"
+
+LINESTYLES_DET = {1: "dotted", 2: "dashed", 3: "dashdot"}
 
