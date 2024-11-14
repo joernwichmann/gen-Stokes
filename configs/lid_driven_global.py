@@ -19,7 +19,7 @@ FORCING_INTENSITY: float = 100
 # Time
 INITIAL_TIME: float = 0
 END_TIME: float = 1
-REFINEMENT_LEVELS: list[int] = list(range(4,10))
+REFINEMENT_LEVELS: list[int] = list(range(7,10))
 
 # Initial data
 INITIAL_CONDITION_NAME: str = "zero"    #see 'src.predefined_data' for available choices
@@ -44,7 +44,7 @@ BOUNDARY_CONDITION_EXPLICIT_NAME: str = "lid-driven-strong"
 BOUNDARY_CONDITION_EXPLICIT_INTENSITY: float = 1
 
 # Monte Carlo
-MC_SAMPLES: int = 10
+MC_SAMPLES: int = 1000
 NOISE_INCREMENTS: str = "classical" # see 'src.noise' for available choices
 
 # Noise coefficient
@@ -55,18 +55,27 @@ NOISE_FREQUENZY_Y: int = 4
 
 ################               ANALYSE configs               ############################
 #Convergence
-TIME_CONVERGENCE: bool = True
+TIME_CONVERGENCE: bool = False
 TIME_COMPARISON_TYPE: str = "absolute"       ## "absolute" and "relative" are supported
 
 #Stability
-STABILITY_CHECK: bool = True
+STABILITY_CHECK: bool = False
 
 #Mean energy
 ENERGY_CHECK: bool = True
 
 #Individual energy
 IND_ENERGY_CHECK: bool = True
-IND_ENERGY_NUMBER: int = 1000
+IND_ENERGY_NUMBER: int = 100
 
 #Statistics
 STATISTICS_CHECK: bool = True
+
+#Point statistics
+POINT_STATISTICS_CHECK: bool = True
+POINT: list[float] = [1/2.0,3/4.0]
+IND_POINT_STATISTICS_CHECK_NUMBER: int = 100
+
+#Increment check
+INCREMENT_CHECK: bool = True
+

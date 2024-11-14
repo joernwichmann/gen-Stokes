@@ -14,18 +14,18 @@ KAPPA_VALUE: float = 0.1
 FORCING: str = "trigonometric"   #see 'src.predefined_data' for available choices
 FORCING_FREQUENZY_X: int = 2
 FORCING_FREQUENZY_Y: int = 4
-FORCING_INTENSITY: float = 1
+FORCING_INTENSITY: float = 100
 
 # Time
 INITIAL_TIME: float = 0
 END_TIME: float = 1
-REFINEMENT_LEVELS: list[int] = list(range(9,10))
+REFINEMENT_LEVELS: list[int] = list(range(7,10))
 
 # Initial data
 INITIAL_CONDITION_NAME: str = "polynomial - HL projected with BC"    #see 'src.predefined_data' for available choices
 INITIAL_FREQUENZY_X: int = 2
 INITIAL_FREQUENZY_Y: int = 4
-INITIAL_INTENSITY: float = 1
+INITIAL_INTENSITY: float = 1000
 
 # Elements
 VELOCITY_ELEMENT: str = "CG"    #see firedrake doc for available spaces
@@ -40,11 +40,11 @@ MESH_NAME: str = "unit square"  #see 'src.discretisation.mesh' for available cho
 NAME_BOUNDARY_CONDITION: str = "zero"  #see 'src.discretisation.mesh' for available choices
 
 # Monte Carlo
-MC_SAMPLES: int = 10
+MC_SAMPLES: int = 1000
 NOISE_INCREMENTS: str = "classical" # see 'src.noise' for available choices
 
 # Noise coefficient
-NOISE_INTENSITY: float = 1
+NOISE_INTENSITY: float = 1000
 NOISE_COEFFICIENT_NAME: str = "polynomial" #see 'src.predefined_data' for available choices
 NOISE_FREQUENZY_X: int = 2
 NOISE_FREQUENZY_Y: int = 4
@@ -62,7 +62,15 @@ ENERGY_CHECK: bool = True
 
 #Individual energy
 IND_ENERGY_CHECK: bool = True
-IND_ENERGY_NUMBER: int = 1000
+IND_ENERGY_NUMBER: int = 100
 
 #Statistics
-STATISTICS_CHECK: bool = False
+STATISTICS_CHECK: bool = True
+
+#Point statistics
+POINT_STATISTICS_CHECK: bool = True
+POINT: list[float] = [1/2.0,3/4.0]
+IND_POINT_STATISTICS_CHECK_NUMBER: int = 100
+
+#Increment check
+INCREMENT_CHECK: bool = True
