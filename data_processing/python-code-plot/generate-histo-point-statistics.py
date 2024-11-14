@@ -4,7 +4,7 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 import os
-from tools_point_statistics import read_datafile, organize_output_single
+from tools_point_statistics import read_datafile, organize_output_single, organize_output
  
 ### select the experiments whose data will be visualised 
 from configs import p_variation_point_statistics as cf
@@ -17,10 +17,14 @@ if __name__=="__main__":
     print(f"Start plot of histograms in dataformat '.{cf.HIST_FILEFORMAT}' with dpi '{cf.HIST_DPI}'")
     all_data_x = dict()
     all_data_y = dict()
+
+    det_data_x = dict()
+    det_data_y = dict()
     for expID in cf.EXPERIMENTS.keys():
         data_x = []
         data_y = []
-        print(f'\nLoading data for {cf.EXPERIMENTS[expID]}') 
+        print(f'\nLoading data for {cf.EXPERIMENTS[expID]}')
+        #load stochastic
         for n in range(cf.NUMBER_SAMPLES):
             file_location = cf.ROOT_LOCATION + cf.EXPERIMENTS[expID] + cf.IND_LOCATION + f"_{n}" + cf.DATA_SOURCE
             complete_data = read_datafile(file_location)
@@ -32,18 +36,17 @@ if __name__=="__main__":
 
         all_data_x[expID] = np.array(data_x)
         all_data_y[expID] = np.array(data_y)
-        
+
+        ##load deterministic
+        file_location = cf.ROOT_LOCATION + cf.EXPERIMENTS[expID] + cf.DET_LOCATION + cf.DATA_SOURCE
+        complete_data = read_datafile(file_location)
+        _, det_data_x[expID], det_data_y[expID] , _, _ = organize_output(complete_data)
+
         print(f'Plotting data for {cf.EXPERIMENTS[expID]}') 
-        
         plt.figure()
         #sns.histplot(all_data[expID], bins="auto", stat="probability", kde=True, color=cf.COLOURS_MEAN[expID], log_scale=(True,False))
         sns.jointplot(x = all_data_x[expID], y=all_data_y[expID], color=cf.COLOURS_MEAN[expID], kind="kde")
-        #plt.xlabel("Kinetic energy",fontsize=cf.LABEL_FONTSIZE)
-        #plt.ylabel("Probability",fontsize=cf.LABEL_FONTSIZE)
-        #plt.vlines(x=cf.STATIONARY_ENERGY,ymin=0,ymax=cf.YMAX[expID],colors="black",linestyles="solid")
-        #plt.yticks(fontsize=cf.TICK_FONTSIZE)
-        #plt.xticks(fontsize=cf.TICK_FONTSIZE)
-        plt.plot(cf.STATIONARY_VAL_X[expID],cf.STATIONARY_VAL_Y[expID], marker = "o",color=cf.COLOURS_MEAN[expID])
+        plt.plot(det_data_x[expID][-1],det_data_y[expID][-1], marker = "o", markeredgecolor = cf.BLACK, color=cf.COLOURS_MEAN[expID])
         plt.xlabel("x")
         plt.ylabel("y")
         #plt.title('velocity at (0.5,0.75)')
@@ -67,7 +70,7 @@ if __name__=="__main__":
     plt.figure()
     sns.jointplot(data = build_data, x = "x", y="y",  hue="experiment", kind="kde", palette=customPalette)
     for expID in cf.EXPERIMENTS.keys():
-        plt.plot(cf.STATIONARY_VAL_X[expID],cf.STATIONARY_VAL_Y[expID], marker = "o", color=cf.COLOURS_MEAN[expID])
+        plt.plot(det_data_x[expID][-1],det_data_y[expID][-1], marker = "o", markeredgecolor = cf.BLACK, color=cf.COLOURS_MEAN[expID])
     #plt.title('velocity at (0.5,0.75)')
     plt.tight_layout()
     plt.savefig(cf.OUTPUT_LOCATION + f"hist-point-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
