@@ -10,7 +10,7 @@ ROOT_LOCATION = "../../point_statistic_results/"
 DET_LOCATION = "/deterministic/p1/mean"
 MEAN_LOCATION = "/p1/mean"
 IND_LOCATION = "/p1/seed"
-DATA_SOURCE = "/refinement_10.csv"
+DATA_SOURCE = "/refinement_9.csv"
 
 #### output 
 OUTPUT_LOCATION = f"output/{EXPERIMENT_NAME}/point_statistics/"
@@ -19,13 +19,7 @@ OUTPUT_LOCATION = f"output/{EXPERIMENT_NAME}/point_statistics/"
 NUMBER_SAMPLES = 100
 
 #### stationary
-STATIONARY_TIME = {1: 0.4, 2: 0.4, 3: 0.4}
-STATIONARY_VAL_X = {1:0.044043617290565246,
-                    2:-0.014916417092931724,
-                    3:-0.010145255394873131}
-STATIONARY_VAL_Y = {1:3.7317082618283726,
-                    2:0.5703828845767361,
-                    3:0.23141628595966934}
+STATIONARY_TIME = {1: 0.5, 2: 0.5, 3: 0.5}
 
 #### plotting configs
 # colours
@@ -55,6 +49,8 @@ LINESTYLE_SD = (0, (1, 1))
 LINEWIDTH_INDIVIDUAL = 0.1
 LINEOPACITY_INDIVIDUAL = 1
 
-LABEL_FONTSIZE = 20
-TICK_FONTSIZE = 20
+LABEL_FONTSIZE = 10
+TICK_FONTSIZE = 10
+
+LINESTYLES_DET = {1: "dotted", 2: "dashed", 3: "dashdot"}
 
