@@ -43,3 +43,13 @@ def organize_output_by_stepsize(eoc_at_time,output):
             stepsize_to_eoc[row[1]] = row[3]
     
     return stepsize_to_timeMeanSD, stepsize_to_eoc
+
+def glue_sto_and_det(stepsize_to_timeMeanSD_sto,stepsize_to_timeMeanSD_det):
+    stepsize_to_timeMeanSDGlued = dict()
+    for stepsize in stepsize_to_timeMeanSD_sto.keys():
+        glued_list = []
+        for timeMeanSD_sto, timeMeanSD_det in zip(stepsize_to_timeMeanSD_sto[stepsize],stepsize_to_timeMeanSD_det[stepsize]):
+            glued_list.append(timeMeanSD_sto + [timeMeanSD_det[1]])
+        stepsize_to_timeMeanSDGlued[stepsize] = glued_list
+
+    return stepsize_to_timeMeanSDGlued
