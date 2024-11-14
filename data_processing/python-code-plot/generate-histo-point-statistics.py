@@ -49,6 +49,8 @@ if __name__=="__main__":
         plt.plot(det_data_x[expID][-1],det_data_y[expID][-1], marker = "o", markeredgecolor = cf.BLACK, color=cf.COLOURS_MEAN[expID])
         plt.xlabel("x")
         plt.ylabel("y")
+        plt.grid()
+        plt.legend([],[], frameon=False)
         #plt.title('velocity at (0.5,0.75)')
         plt.tight_layout()
         plt.savefig(cf.OUTPUT_LOCATION + f"hist-point-{cf.EXPERIMENTS[expID]}.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
@@ -72,6 +74,8 @@ if __name__=="__main__":
     for expID in cf.EXPERIMENTS.keys():
         plt.plot(det_data_x[expID][-1],det_data_y[expID][-1], marker = "o", markeredgecolor = cf.BLACK, color=cf.COLOURS_MEAN[expID])
     #plt.title('velocity at (0.5,0.75)')
+    plt.grid()
+    plt.legend([],[], frameon=False)
     plt.tight_layout()
     plt.savefig(cf.OUTPUT_LOCATION + f"hist-point-{cf.EXPERIMENT_NAME}-all.{cf.HIST_FILEFORMAT}",dpi=cf.HIST_DPI)
     plt.close()
